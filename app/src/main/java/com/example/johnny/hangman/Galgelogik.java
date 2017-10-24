@@ -56,8 +56,15 @@ public class Galgelogik {
     }
 
     public Galgelogik() {
-
         muligeOrd.add("computer");
+        muligeOrd.add("skyat");
+        muligeOrd.add("skididi");
+        muligeOrd.add("papa");
+        muligeOrd.add("bumbum");
+        muligeOrd.add("brr");
+        muligeOrd.add("bruh");
+        muligeOrd.add("poompoom");
+        muligeOrd.add("bigshaq");
         nulstil();
     }
 
