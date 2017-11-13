@@ -62,11 +62,13 @@ public class Galgelogik {
         return spilletErTabt || spilletErVundet;
     }
 
-// Hvis man gerne vil indsætte sine egne ord
     public Galgelogik() {
         muligeOrd.add("yo");
         nulstil();
-    }
+
+        // Her indsættes ord hvis man vil have sin egne
+        //muligeOrd.add("Ord");
+   }
 
     public void nulstil() {
         brugteBogstaver.clear();
@@ -102,7 +104,6 @@ public class Galgelogik {
 
         if (spilletErVundet || spilletErTabt) return;
 
-
         if (ordet.contains(bogstav)) {
             sidsteBogstavVarKorrekt = true;
             System.out.println("Bogstavet var korrekt: " + bogstav);
@@ -137,7 +138,7 @@ public class Galgelogik {
         return sb.toString();
     }
 
-    public void hentOrdFraDr() throws Exception {
+    public void hentOrdFraURL() throws Exception {
         String data = hentUrl("https://na.leagueoflegends.com/en/");
         //System.out.println("data = " + data);
 

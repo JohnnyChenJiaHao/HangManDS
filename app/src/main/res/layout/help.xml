@@ -26,15 +26,16 @@
 
     <TextView
         android:id="@+id/helpHeader"
-        android:layout_width="190dp"
-        android:layout_height="32dp"
+        android:layout_width="300dp"
+        android:layout_height="30dp"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
         android:text="Description of the Game"
         android:textAlignment="center"
-        android:textSize="16sp"
+        android:textColor="@android:color/white"
+        android:textSize="26sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -45,7 +46,7 @@
     <WebView
         android:id="@+id/webview"
         android:layout_width="411dp"
-        android:layout_height="444dp"
+        android:layout_height="472dp"
         android:layout_marginTop="120dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -62,12 +63,13 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="You have to guess a word! You got guesses to win the game. Each guess has to be a single letter. \n\nRead more about Hangman below:"
+        android:text="You have to guess a word! You got 6 guesses to win the game. Each guess has to be a single letter. \n\nRead more about Hangman below:"
         android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/webview"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/helpHeader"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.372" />
 </android.support.constraint.ConstraintLayout>

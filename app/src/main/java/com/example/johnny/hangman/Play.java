@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * Created by Johnny on 23/10/17.
@@ -31,18 +30,20 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
 
     long tStart, tEnd;
 
+    static int games, won, lost;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.play);
-        spil.nulstil();
+        spil.nulstil(); //Husk at fjerne dette for at køre URL
 
         tStart = SystemClock.elapsedRealtime();
 
-//        class AsyncTaskDR extends AsyncTask {
+//        class AsyncTaskURL extends AsyncTask {
 //            @Override
 //            protected Object doInBackground(Object[] objects) {
 //                try {
-//                    spil.hentOrdFraDr();
+//                    spil.hentOrdFraURL();
 //                }
 //                catch (Exception e) {
 //                    e.printStackTrace();
@@ -58,7 +59,7 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
 //            }
 //        }
 //
-//        new AsyncTaskDR().execute();
+//        new AsyncTaskURL().execute();
 
         guessLetter = (EditText) findViewById(R.id.guessLetter);
 
@@ -132,16 +133,24 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
             // Toast.makeText(this, "Congratulations, you won!", Toast.LENGTH_SHORT).show();
             Intent i = new Intent(this, Win.class);
             startActivity(i);
-            finish();
 
             tEnd = SystemClock.elapsedRealtime();
             totalTime();
+
+            games++;
+            won++;
+
+            finish();
         }
         else if (spil.erSpilletTabt()) {
-            Toast.makeText(this, "You lost.. the word was: " + spil.getOrdet(), Toast.LENGTH_SHORT).show();
-            //Intent i = new Intent(this, Lose.class);
-            //startActivity(i);
-            spil.nulstil();
+            //Toast.makeText(this, "You lost.. the word was: " + spil.getOrdet(), Toast.LENGTH_SHORT).show();
+            Intent i = new Intent(this, Lose.class);
+            startActivity(i);
+
+            games++;
+            lost++;
+
+            finish();
         }
 
     }
