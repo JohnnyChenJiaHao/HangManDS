@@ -1,6 +1,8 @@
 package com.example.johnny.hangman;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -19,30 +21,61 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
 
     Button guessButton, menu;
 
-    TextView wordView, miss;
+    TextView wordView, letters, life;
 
     ImageView image;
 
     EditText guessLetter;
 
+    public static double totalTime;
+
+    long tStart, tEnd;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.play);
         spil.nulstil();
 
-        wordView = (TextView) findViewById(R.id.word);
+        tStart = SystemClock.elapsedRealtime();
+
+//        class AsyncTaskDR extends AsyncTask {
+//            @Override
+//            protected Object doInBackground(Object[] objects) {
+//                try {
+//                    spil.hentOrdFraDr();
+//                }
+//                catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                return null;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(Object o) {
+//                spil.nulstil();
+//                update();
+//                wordView.setText(spil.getSynligtOrd());
+//            }
+//        }
+//
+//        new AsyncTaskDR().execute();
+
         guessLetter = (EditText) findViewById(R.id.guessLetter);
+
         guessButton = (Button) findViewById(R.id.guessButton);
+        menu = (Button) findViewById(R.id.menuButton);
 
         image = (ImageView) findViewById(R.id.image);
-        miss = (TextView) findViewById(R.id.miss);
-        menu = (Button) findViewById(R.id.menu);
+
+        letters = (TextView) findViewById(R.id.letters);
+        wordView = (TextView) findViewById(R.id.word);
+        life = (TextView) findViewById(R.id.lives);
 
         guessButton.setOnClickListener(this);
         menu.setOnClickListener(this);
 
-        wordView.setText(spil.getSynligtOrd());
+        letters.setText("Used letters: " + spil.getBrugteBogstaver());
+        life.setText("Lives: " + spil.getAntalLiv());
     }
 
     public void onClick(View v) {
@@ -58,23 +91,23 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
 
             guessLetter.setError(null);
 
-            switch (spil.getAntalForkerteBogstaver()) {
-                case 1:
+            switch (spil.getAntalLiv()) {
+                case 5:
                     image.setImageResource(R.mipmap.forkert1);
                     break;
-                case 2:
+                case 4:
                     image.setImageResource(R.mipmap.forkert2);
                     break;
                 case 3:
                     image.setImageResource(R.mipmap.forkert3);
                     break;
-                case 4:
+                case 2:
                     image.setImageResource(R.mipmap.forkert4);
                     break;
-                case 5:
+                case 1:
                     image.setImageResource(R.mipmap.forkert5);
                     break;
-                case 6:
+                case 0:
                     image.setImageResource(R.mipmap.forkert6);
                     break;
                 default:
@@ -92,18 +125,33 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
 
     private void update() {
         wordView.setText(spil.getSynligtOrd());
-        miss.setText(spil.getAntalForkerteBogstaver() + " Miss(es): " + spil.getBrugteBogstaver());
+        letters.setText("Used letters: " + spil.getBrugteBogstaver());
+        life.setText("Lives: " + spil.getAntalLiv());
 
         if (spil.erSpilletVundet()) {
-            Toast.makeText(this, "Congratulations, you won!", Toast.LENGTH_SHORT).show();
-            spil.nulstil();
-            miss.setText("");
+            // Toast.makeText(this, "Congratulations, you won!", Toast.LENGTH_SHORT).show();
+            Intent i = new Intent(this, Win.class);
+            startActivity(i);
+            finish();
+
+            tEnd = SystemClock.elapsedRealtime();
+            totalTime();
         }
-        if (spil.erSpilletTabt()) {
+        else if (spil.erSpilletTabt()) {
             Toast.makeText(this, "You lost.. the word was: " + spil.getOrdet(), Toast.LENGTH_SHORT).show();
+            //Intent i = new Intent(this, Lose.class);
+            //startActivity(i);
             spil.nulstil();
         }
 
+    }
+
+    public void totalTime() {
+        totalTime = (tEnd - tStart) / 1000;
+    }
+
+    public static double getTotalTime() {
+        return totalTime;
     }
 
 }
