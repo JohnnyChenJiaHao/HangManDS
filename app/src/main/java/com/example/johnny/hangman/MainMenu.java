@@ -1,7 +1,11 @@
 package com.example.johnny.hangman;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -45,8 +49,46 @@ public class MainMenu extends AppCompatActivity implements View.OnClickListener 
         }
 
         else if (v == resetButton) {
-            Toast.makeText(this, "Not implemented yet", Toast.LENGTH_LONG).show();
-        }
 
+            AlertDialog.Builder reset = new AlertDialog.Builder(this);
+            reset.setTitle("Reset Data");
+            reset.setMessage("This will erase the data and cannot be undone");
+            reset.setPositiveButton("Reset",new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    final SharedPreferences.Editor win = getSharedPreferences("Wins", Context.MODE_PRIVATE).edit();
+                    final SharedPreferences.Editor lose = getSharedPreferences("Losses", Context.MODE_PRIVATE).edit();
+                    final SharedPreferences.Editor totalGame = getSharedPreferences("TotalGames", Context.MODE_PRIVATE).edit();
+
+                    win.clear();
+                    lose.clear();
+                    totalGame.clear();
+
+                    win.apply();
+                    lose.apply();
+                    totalGame.apply();
+
+                    Play.totalGames = 0;
+                    Play.won = 0;
+                    Play.lost = 0;
+
+                    showToast();
+                }
+            });
+
+            reset.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            reset.create();
+            reset.show();
+
+        }
+    }
+
+    public void showToast() {
+        Toast.makeText(this,"Data erased",Toast.LENGTH_LONG).show();
     }
 }

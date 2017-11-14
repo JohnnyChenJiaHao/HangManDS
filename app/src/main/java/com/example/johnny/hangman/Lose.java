@@ -41,6 +41,7 @@ public class Lose extends AppCompatActivity implements View.OnClickListener {
 
         if (v == menu) {
             onBackPressed();
+            finish();
         }
 
         if (v == playAgain) {

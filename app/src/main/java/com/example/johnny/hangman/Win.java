@@ -46,6 +46,7 @@ public class Win extends AppCompatActivity implements View.OnClickListener {
 
         if (v == menu){
             onBackPressed();
+            finish();
         }
 
         if (v == playAgain) {

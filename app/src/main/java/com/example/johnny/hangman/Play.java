@@ -1,6 +1,9 @@
 package com.example.johnny.hangman;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
@@ -30,36 +33,37 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
 
     long tStart, tEnd;
 
-    static int games, won, lost;
+    static int totalGames, won, lost;
+
+    static String totalGamesStr, wonStr, lostStr;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.play);
-        spil.nulstil(); //Husk at fjerne dette for at køre URL
 
         tStart = SystemClock.elapsedRealtime();
 
-//        class AsyncTaskURL extends AsyncTask {
-//            @Override
-//            protected Object doInBackground(Object[] objects) {
-//                try {
-//                    spil.hentOrdFraURL();
-//                }
-//                catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                return null;
-//            }
-//
-//            @Override
-//            protected void onPostExecute(Object o) {
-//                spil.nulstil();
-//                update();
-//                wordView.setText(spil.getSynligtOrd());
-//            }
-//        }
-//
-//        new AsyncTaskURL().execute();
+        class AsyncTaskURL extends AsyncTask {
+            @Override
+            protected Object doInBackground(Object[] objects) {
+                try {
+                    spil.hentOrdFraURL();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Object o) {
+                spil.nulstil();
+                update();
+                wordView.setText(spil.getSynligtOrd());
+            }
+        }
+
+        new AsyncTaskURL().execute();
 
         guessLetter = (EditText) findViewById(R.id.guessLetter);
 
@@ -129,30 +133,39 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
         letters.setText("Used letters: " + spil.getBrugteBogstaver());
         life.setText("Lives: " + spil.getAntalLiv());
 
-        if (spil.erSpilletVundet()) {
-            // Toast.makeText(this, "Congratulations, you won!", Toast.LENGTH_SHORT).show();
-            Intent i = new Intent(this, Win.class);
-            startActivity(i);
+        final SharedPreferences.Editor TotalGame = getSharedPreferences("TotalGames", Context.MODE_PRIVATE).edit();
 
+        if (spil.erSpilletVundet()) {
             tEnd = SystemClock.elapsedRealtime();
             totalTime();
 
-            games++;
-            won++;
+            totalGames++;
+            TotalGame.putInt(totalGamesStr,totalGames);
+            TotalGame.apply();
 
+            won++;
+            final SharedPreferences.Editor win = getSharedPreferences("Wins", Context.MODE_PRIVATE).edit();
+            win.putInt(wonStr,won);
+            win.apply();
+
+            Intent i = new Intent(this, Win.class);
+            startActivity(i);
             finish();
         }
         else if (spil.erSpilletTabt()) {
-            //Toast.makeText(this, "You lost.. the word was: " + spil.getOrdet(), Toast.LENGTH_SHORT).show();
+            totalGames++;
+            TotalGame.putInt(totalGamesStr,totalGames);
+            TotalGame.apply();
+
+            lost++;
+            final SharedPreferences.Editor lose = getSharedPreferences("Losses", Context.MODE_PRIVATE).edit();
+            lose.putInt(lostStr,lost);
+            lose.apply();
+
             Intent i = new Intent(this, Lose.class);
             startActivity(i);
-
-            games++;
-            lost++;
-
             finish();
         }
-
     }
 
     public void totalTime() {
@@ -162,5 +175,4 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
     public static double getTotalTime() {
         return totalTime;
     }
-
 }

@@ -47,13 +47,14 @@
     <TextView
         android:id="@+id/games"
         android:layout_width="300dp"
-        android:layout_height="30dp"
+        android:layout_height="60dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="Games"
         android:textAlignment="center"
+        android:textAllCaps="false"
         android:textColor="@android:color/white"
         android:textSize="22sp"
         android:textStyle="bold"
@@ -67,7 +68,7 @@
     <TextView
         android:id="@+id/won"
         android:layout_width="300dp"
-        android:layout_height="28dp"
+        android:layout_height="60dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
@@ -87,7 +88,7 @@
     <TextView
         android:id="@+id/lost"
         android:layout_width="300dp"
-        android:layout_height="30dp"
+        android:layout_height="60dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
@@ -120,5 +121,5 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lost"
-        app:layout_constraintVertical_bias="0.774" />
+        app:layout_constraintVertical_bias="0.683" />
 </android.support.constraint.ConstraintLayout>

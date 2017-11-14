@@ -18,11 +18,8 @@ public class Galgelogik {
     private ArrayList<String> brugteBogstaver = new ArrayList<>();
     private String synligtOrd;
     private int antalLiv, nrWrong;
-    private boolean sidsteBogstavVarKorrekt;
     private boolean spilletErVundet;
     private boolean spilletErTabt;
-    private boolean BogstavBrugt;
-
 
     public ArrayList<String> getBrugteBogstaver() {
         return brugteBogstaver;
@@ -42,10 +39,6 @@ public class Galgelogik {
 
     public int getNrWrong() { return nrWrong; }
 
-    public boolean erSidsteBogstavKorrekt() {
-        return sidsteBogstavVarKorrekt;
-    }
-
     public boolean erSpilletVundet() {
         return spilletErVundet;
     }
@@ -54,17 +47,7 @@ public class Galgelogik {
         return spilletErTabt;
     }
 
-    public boolean erBogstavBrugt() {
-        return BogstavBrugt;
-    }
-
-    public boolean erSpilletSlut() {
-        return spilletErTabt || spilletErVundet;
-    }
-
     public Galgelogik() {
-        muligeOrd.add("yo");
-        nulstil();
 
         // Her indsættes ord hvis man vil have sin egne
         //muligeOrd.add("Ord");
@@ -74,7 +57,6 @@ public class Galgelogik {
         brugteBogstaver.clear();
         antalLiv = 6;
         nrWrong = 0;
-        BogstavBrugt = false;
         spilletErVundet = false;
         spilletErTabt = false;
         ordet = muligeOrd.get(new Random().nextInt(muligeOrd.size()));
@@ -105,13 +87,10 @@ public class Galgelogik {
         if (spilletErVundet || spilletErTabt) return;
 
         if (ordet.contains(bogstav)) {
-            sidsteBogstavVarKorrekt = true;
             System.out.println("Bogstavet var korrekt: " + bogstav);
         }
         else {
             // Vi gættede på et bogstav der ikke var i ordet.
-            sidsteBogstavVarKorrekt = false;
-
             System.out.println("Bogstavet var IKKE korrekt: " + bogstav);
 
             antalLiv = antalLiv - 1;
