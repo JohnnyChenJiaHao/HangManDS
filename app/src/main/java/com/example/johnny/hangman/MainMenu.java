@@ -59,18 +59,22 @@ public class MainMenu extends AppCompatActivity implements View.OnClickListener 
                     final SharedPreferences.Editor win = getSharedPreferences("Wins", Context.MODE_PRIVATE).edit();
                     final SharedPreferences.Editor lose = getSharedPreferences("Losses", Context.MODE_PRIVATE).edit();
                     final SharedPreferences.Editor totalGame = getSharedPreferences("TotalGames", Context.MODE_PRIVATE).edit();
+                    final SharedPreferences.Editor highscore = getSharedPreferences("Highscore", Context.MODE_PRIVATE).edit();
 
                     win.clear();
                     lose.clear();
                     totalGame.clear();
+                    highscore.clear();
 
                     win.apply();
                     lose.apply();
                     totalGame.apply();
+                    highscore.apply();
 
                     Play.totalGames = 0;
                     Play.won = 0;
                     Play.lost = 0;
+
 
                     showToast();
                 }

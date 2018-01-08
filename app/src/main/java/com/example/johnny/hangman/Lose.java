@@ -16,8 +16,8 @@ import static com.example.johnny.hangman.Play.spil;
 
 public class Lose extends AppCompatActivity implements View.OnClickListener {
 
-    TextView word;
-
+    TextView word, score;
+    int currentScore;
     Button menu, playAgain;
 
     @Override
@@ -26,14 +26,18 @@ public class Lose extends AppCompatActivity implements View.OnClickListener {
         setContentView(R.layout.lose);
 
         word = (TextView) findViewById(R.id.word);
-
+        score = (TextView) findViewById(R.id.score);
         menu = (Button) findViewById(R.id.menuButton);
         playAgain = (Button) findViewById(R.id.playAgainButton);
 
         menu.setOnClickListener(this);
         playAgain.setOnClickListener(this);
 
+        Intent i = getIntent();
+        currentScore = i.getIntExtra("currentScore",spil.getScore());
+
         word.setText("The word was: " + spil.getOrdet());
+        score.setText("Score: " + currentScore);
     }
 
     @Override

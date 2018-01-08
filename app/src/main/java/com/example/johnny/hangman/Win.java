@@ -1,6 +1,8 @@
 package com.example.johnny.hangman;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -16,7 +18,11 @@ import static com.example.johnny.hangman.Play.spil;
 
 public class Win extends AppCompatActivity implements View.OnClickListener {
 
-    TextView word, nrWrong, time;
+    int currentScore;
+
+    static String highScoreStr;
+
+    TextView word, nrWrong, time, score;
 
     Button menu, playAgain;
 
@@ -29,6 +35,7 @@ public class Win extends AppCompatActivity implements View.OnClickListener {
         word = (TextView) findViewById(R.id.word);
         nrWrong = (TextView) findViewById(R.id.nrWrong);
         time = (TextView) findViewById(R.id.time);
+        score = (TextView) findViewById(R.id.score);
 
         menu = (Button) findViewById(R.id.menuButton);
         playAgain = (Button) findViewById(R.id.playAgainButton);
@@ -36,9 +43,17 @@ public class Win extends AppCompatActivity implements View.OnClickListener {
         menu.setOnClickListener(this);
         playAgain.setOnClickListener(this);
 
+        Intent i = getIntent();
+        currentScore = i.getIntExtra("currentScore",spil.getScore());
+
         word.setText("You guessed the word: " + spil.getOrdet());
         nrWrong.setText("Wrong guesses: " + spil.getNrWrong());
         time.setText("Time: " + Play.getTotalTime() + "s");
+        score.setText("Score: " + currentScore);
+
+        final SharedPreferences.Editor highScore = getSharedPreferences("Highscore", Context.MODE_PRIVATE).edit();
+        highScore.putInt(highScoreStr,currentScore);
+        highScore.apply();
     }
 
     @Override

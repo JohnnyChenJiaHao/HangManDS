@@ -3,6 +3,7 @@ package com.example.johnny.hangman;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -13,6 +14,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.easyandroidanimations.library.Animation;
+import com.easyandroidanimations.library.AnimationListener;
+import com.easyandroidanimations.library.ExplodeAnimation;
+
 /**
  * Created by Johnny on 23/10/17.
  */
@@ -21,9 +26,9 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
 
     public static Galgelogik spil = new Galgelogik();
 
-    Button guessButton, menu;
+    Button guessButton;
 
-    TextView wordView, letters, life;
+    TextView wordView, letters, life, score;
 
     ImageView image;
 
@@ -42,6 +47,8 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
         setContentView(R.layout.play);
 
         tStart = SystemClock.elapsedRealtime();
+        spil.setScore(0);
+        spil.setStreak(0);
 
         class AsyncTaskURL extends AsyncTask {
             @Override
@@ -68,29 +75,38 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
         guessLetter = (EditText) findViewById(R.id.guessLetter);
 
         guessButton = (Button) findViewById(R.id.guessButton);
-        menu = (Button) findViewById(R.id.menuButton);
 
         image = (ImageView) findViewById(R.id.image);
 
         letters = (TextView) findViewById(R.id.letters);
         wordView = (TextView) findViewById(R.id.word);
         life = (TextView) findViewById(R.id.lives);
+        score = (TextView) findViewById(R.id.score);
 
         guessButton.setOnClickListener(this);
-        menu.setOnClickListener(this);
 
         letters.setText("Used letters: " + spil.getBrugteBogstaver());
         life.setText("Lives: " + spil.getAntalLiv());
+        score.setText("Score: " + spil.getScore());
     }
 
     public void onClick(View v) {
         String guessLet = guessLetter.getText().toString();
+
+        new ExplodeAnimation(guessButton).setListener(new AnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                guessButton.setVisibility(View.VISIBLE);
+            }
+        }).animate();
+
 
         if (v == guessButton) {
             if (guessLet.length() != 1) {
                 guessLetter.setError("Write a letter");
                 return;
             }
+
 
             spil.gætBogstav(guessLet);
 
@@ -122,16 +138,13 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
             update();
             guessLetter.setText("");
         }
-
-        else if (v == menu) {
-            onBackPressed();
-        }
     }
 
     private void update() {
         wordView.setText(spil.getSynligtOrd());
         letters.setText("Used letters: " + spil.getBrugteBogstaver());
         life.setText("Lives: " + spil.getAntalLiv());
+        score.setText("Score: " + spil.getScore());
 
         final SharedPreferences.Editor TotalGame = getSharedPreferences("TotalGames", Context.MODE_PRIVATE).edit();
 
@@ -148,7 +161,11 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
             win.putInt(wonStr,won);
             win.apply();
 
+            final MediaPlayer win_sound = MediaPlayer.create(this, R.raw.win);
+            win_sound.start();
+
             Intent i = new Intent(this, Win.class);
+            i.putExtra("currentScore",spil.getScore());
             startActivity(i);
             finish();
         }
@@ -162,7 +179,11 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
             lose.putInt(lostStr,lost);
             lose.apply();
 
+            final MediaPlayer lose_sound = MediaPlayer.create(this, R.raw.lose);
+            lose_sound.start();
+
             Intent i = new Intent(this, Lose.class);
+            i.putExtra("currentScore",spil.getScore());
             startActivity(i);
             finish();
         }

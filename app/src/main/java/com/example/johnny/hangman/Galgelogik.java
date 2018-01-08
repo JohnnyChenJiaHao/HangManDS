@@ -17,7 +17,7 @@ public class Galgelogik {
     private String ordet;
     private ArrayList<String> brugteBogstaver = new ArrayList<>();
     private String synligtOrd;
-    private int antalLiv, nrWrong;
+    private int antalLiv, nrWrong, score = 0, streak = 0;
     private boolean spilletErVundet;
     private boolean spilletErTabt;
 
@@ -45,6 +45,18 @@ public class Galgelogik {
 
     public boolean erSpilletTabt() {
         return spilletErTabt;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setStreak(int streak) {
+        this.streak = streak;
     }
 
     public Galgelogik() {
@@ -88,10 +100,23 @@ public class Galgelogik {
 
         if (ordet.contains(bogstav)) {
             System.out.println("Bogstavet var korrekt: " + bogstav);
+            streak++;
+
+            if (streak == 2) {
+                score = score + 100;
+            }
+            else if (streak == 3) {
+                score = score + 150;
+            }
+            else {
+                score = score + 50;
+            }
         }
         else {
             // Vi gættede på et bogstav der ikke var i ordet.
             System.out.println("Bogstavet var IKKE korrekt: " + bogstav);
+            streak = 0;
+            score = score - 50;
 
             antalLiv = antalLiv - 1;
             nrWrong = nrWrong + 1;
