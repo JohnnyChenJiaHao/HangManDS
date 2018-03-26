@@ -45,7 +45,7 @@ public class Win extends AppCompatActivity implements View.OnClickListener {
 
         Intent i = getIntent();
         currentScore = i.getIntExtra("currentScore",spil.getScore());
-
+    
         word.setText("You guessed the word: " + spil.getOrdet());
         nrWrong.setText("Wrong guesses: " + spil.getNrWrong());
         time.setText("Time: " + Play.getTotalTime() + "s");
