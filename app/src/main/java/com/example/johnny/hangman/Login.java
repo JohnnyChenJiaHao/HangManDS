@@ -67,7 +67,7 @@ public class Login extends AppCompatActivity {
                     finish();
                 }
                 else{
-                    Toast.makeText(Login.this, "Forkert brugernavn/kodeord", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Login.this, "Wrong credentials", Toast.LENGTH_LONG).show();
                 }
             }
         }

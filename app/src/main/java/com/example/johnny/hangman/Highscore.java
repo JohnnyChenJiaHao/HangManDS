@@ -20,19 +20,15 @@ import java.util.ArrayList;
  */
 
 public class Highscore extends AppCompatActivity {
-    Button Home;
+    Button menu;
     ListView hs;
     ArrayList<User> data;
-    User user1 = new User("", "","","");
-    User user2 = new User("", "","","");
-    User user3 = new User("", "","","");
-    User user4 = new User("", "","","");
-    User user5 = new User("", "","","");
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.highscore);
 
-        Home = (Button) findViewById(R.id.Home);
+        menu = (Button) findViewById(R.id.menu);
         hs = (ListView) findViewById(R.id.lv);
 
 
@@ -50,23 +46,15 @@ public class Highscore extends AppCompatActivity {
                     String response = client.getResponse();
                     JSONArray jsonArray = new JSONArray(response);
                     data = new ArrayList<User>();
-                    data.add(user1);
-                    data.add(user2);
-                    data.add(user3);
-                    data.add(user4);
-                    data.add(user5);
 
                     for(int i = 0; i < jsonArray.length(); i++){
-                         JSONObject object = jsonArray.getJSONObject(i);
-
-
-                        for(int j = 0; j < data.size(); j++){
-                            data.get(j).setStudent_Id(object.getString("student_Id"));
-                            data.get(j).setScore(object.getString("score"));
-                            data.get(j).setNumberOfTries(object.getString("number_of_tries"));
-                            data.get(j).setTime_used(object.getString("time_used"));
-                            data.get(j).toString();
-                        }
+                        JSONObject object = jsonArray.getJSONObject(i);
+                        User user = new User("", "","","");
+                        user.setStudent_Id(object.getString("student_Id"));
+                        user.setScore(object.getString("score"));
+                        user.setNumberOfTries(object.getString("number_of_tries"));
+                        user.setTime_used(object.getString("time_used"));
+                        data.add(user);
                     }
                 }
                 catch (Exception e) {
@@ -85,7 +73,7 @@ public class Highscore extends AppCompatActivity {
         new AsyncTaskURL().execute();
 
 
-        Home.setOnClickListener(new View.OnClickListener() {
+        menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(Highscore.this, MainMenu.class);
