@@ -23,11 +23,11 @@ public class Highscore extends AppCompatActivity {
     Button Home;
     ListView hs;
     ArrayList<User> data;
-    User user1 = new User("a", "a","a","a");
-    User user2 = new User("a", "a","a","a");
-    User user3 = new User("a", "a","a","a");
-    User user4 = new User("a", "a","a","a");
-    User user5 = new User("a", "a","a","a");
+    User user1 = new User("", "","","");
+    User user2 = new User("", "","","");
+    User user3 = new User("", "","","");
+    User user4 = new User("", "","","");
+    User user5 = new User("", "","","");
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.highscore);
@@ -77,17 +77,13 @@ public class Highscore extends AppCompatActivity {
 
             @Override
             protected void onPostExecute(Object o) {
+                UserListAdapter adapter = new UserListAdapter(getApplicationContext(), R.layout.postlist, data);
+                hs.setAdapter(adapter);
+
             }
         }
         new AsyncTaskURL().execute();
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
-        UserListAdapter adapter = new UserListAdapter(this, R.layout.postlist, data);
-        hs.setAdapter(adapter);
 
         Home.setOnClickListener(new View.OnClickListener() {
             @Override
