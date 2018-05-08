@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
         <activity
-            android:name=".MainMenu">
+            android:name=".Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -35,6 +35,10 @@
             />
 
         <activity android:name=".Lose"
+            />
+        <activity android:name=".MainMenu"
+            />
+        <activity android:name=".Highscore"
             />
 
     </application>
