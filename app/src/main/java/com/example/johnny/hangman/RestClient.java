@@ -25,6 +25,7 @@ import java.util.ArrayList;
  * Created by sammy on 08-05-2018.
  */
 
+//This client is inspired by http://lukencode.com/2010/04/27/calling-web-services-in-android-using-httpclient/
 public class RestClient {
     public enum RequestMethod
     {

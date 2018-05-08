@@ -2,10 +2,49 @@
 
     <android.widget.RelativeLayout tools:context="com.example.johnny.hangman.Login" android:layout_height="match_parent" android:layout_width="match_parent" xmlns:tools="http://schemas.android.com/tools" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <EditText android:layout_height="wrap_content" android:layout_width="wrap_content" android:inputType="textPersonName" android:hint="Brugernavn" android:ems="10" android:layout_centerVertical="true" android:layout_alignStart="@+id/password" android:id="@+id/userName"/>
 
-    <EditText android:layout_height="wrap_content" android:layout_width="wrap_content" android:inputType="textPassword" android:hint="Kodeord" android:ems="10" android:id="@+id/password" android:layout_marginBottom="152dp" android:layout_centerHorizontal="true" android:layout_alignParentBottom="true"/>
+    <EditText
+        android:id="@+id/userName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/password"
+        android:layout_alignStart="@+id/password"
+        android:layout_marginBottom="49dp"
+        android:ems="10"
+        android:hint="Username"
+        android:inputType="textPersonName" />
 
-    <Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/login" android:layout_centerHorizontal="true" android:text="Login" android:layout_marginTop="73dp" android:layout_alignTop="@+id/password"/>
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/userName"
+        android:backgroundTint="@color/colorPrimary"
+        android:textColor="@android:color/white"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="75dp"
+        android:text="Login" />
+
+    <TextView
+        android:id="@+id/loginText"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/userName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="75dp"
+        android:text="Sign in" />
 
 </android.widget.RelativeLayout>

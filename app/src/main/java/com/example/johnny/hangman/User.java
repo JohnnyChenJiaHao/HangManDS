@@ -5,24 +5,24 @@ package com.example.johnny.hangman;
  */
 
 public class User {
-    private String Student_Id;
+    private String student_Id;
     private String score;
-    private String NumberOfTries;
+    private String numberOfTries;
     private String time_used;
 
-    public User(String Student_Id, String score, String NumberOfTries, String time_used){
-        this.Student_Id = Student_Id;
+    public User(String student_Id, String score, String numberOfTries, String time_used){
+        this.student_Id = student_Id;
         this.score = score;
-        this.NumberOfTries = NumberOfTries;
+        this.numberOfTries = numberOfTries;
         this.time_used = time_used;
     }
 
     public String getStudent_Id() {
-        return Student_Id;
+        return student_Id;
     }
 
     public void setStudent_Id(String student_Id) {
-        Student_Id = student_Id;
+        this.student_Id = student_Id;
     }
 
     public String getScore() {
@@ -30,15 +30,15 @@ public class User {
     }
 
     public void setScore(String score) {
-        this.score = score;
+        this.score = "Score: " + score;
     }
 
     public String getNumberOfTries() {
-        return NumberOfTries;
+        return numberOfTries;
     }
 
     public void setNumberOfTries(String numberOfTries) {
-        NumberOfTries = numberOfTries;
+        this.numberOfTries = "Tries: " + numberOfTries;
     }
 
     public String getTime_used() {
