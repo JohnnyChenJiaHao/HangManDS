@@ -55,8 +55,6 @@ public class Login extends AppCompatActivity {
                             "    \"password\"          : " + pw +
                             "}";
 
-                    System.out.println(inputJsonString);
-
                     client.setJSONString(inputJsonString);
                     client.addHeader("Content-Type", "appication/json"); // if required
 

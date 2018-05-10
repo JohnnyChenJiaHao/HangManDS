@@ -13,10 +13,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.easyandroidanimations.library.Animation;
 import com.easyandroidanimations.library.AnimationListener;
 import com.easyandroidanimations.library.ExplodeAnimation;
+
+import static com.example.johnny.hangman.RequestMethod.POST;
 
 /**
  * Created by Johnny on 23/10/17.
@@ -40,7 +43,7 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
 
     static int totalGames, won, lost;
 
-    static String totalGamesStr, wonStr, lostStr;
+    static String totalGamesStr, wonStr, lostStr, visiblewWord;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,28 +52,6 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
         tStart = SystemClock.elapsedRealtime();
         spil.setScore(0);
         spil.setStreak(0);
-
-        class AsyncTaskURL extends AsyncTask {
-            @Override
-            protected Object doInBackground(Object[] objects) {
-                try {
-                    spil.hentOrdFraURL();
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Object o) {
-                spil.nulstil();
-                update();
-                wordView.setText(spil.getSynligtOrd());
-            }
-        }
-
-        new AsyncTaskURL().execute();
 
         guessLetter = (EditText) findViewById(R.id.guessLetter);
 
@@ -88,10 +69,47 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
         letters.setText("Used letters: " + spil.getBrugteBogstaver());
         life.setText("Lives: " + spil.getAntalLiv());
         score.setText("Score: " + spil.getScore());
+
+        class StartUpAsyncTask extends AsyncTask {
+            @Override
+            protected Object doInBackground(Object[] objects) {
+                try {
+                    RestClient Nulstilclient = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/game/nulstil");
+                    try {
+                        Nulstilclient.execute(RequestMethod.GET);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    RestClient client = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/game/getsynligtord");
+                    try {
+                        client.execute(RequestMethod.GET);
+                        visiblewWord = client.getResponse().toString();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Object o) {
+                wordView.setText(visiblewWord);
+            }
+        }
+        new StartUpAsyncTask().execute();
+
+
+
     }
 
+
+
     public void onClick(View v) {
-        String guessLet = guessLetter.getText().toString();
+        final String guessLet = guessLetter.getText().toString();
 
         new ExplodeAnimation(guessButton).setListener(new AnimationListener() {
             @Override
@@ -101,16 +119,52 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
         }).animate();
 
 
+        class GuessLetterAsyncTask extends AsyncTask {
+            @Override
+            protected Object doInBackground(Object[] objects) {
+                try {
+                    RestClient guessLetterclient = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/game/gaetbogstav");
+                    try {
+                        String inputJsonString = "{" +
+                                "    \"bogstav\"          :" + guessLet +
+                                "}";
+
+                        guessLetterclient.setJSONString(inputJsonString);
+                        guessLetterclient.addHeader("Content-Type", "appication/json"); // if required
+                        guessLetterclient.execute(RequestMethod.POST);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    RestClient visibleWordclient = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/game/getsynligtord");
+                    try {
+                        visibleWordclient.execute(RequestMethod.GET);
+                        visiblewWord = visibleWordclient.getResponse().toString();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                RestClient Statusclient = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/game/logstatus");
+                System.out.println(Statusclient.getResponseCode());
+                System.out.println(Statusclient.getResponse());
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Object o) {
+                wordView.setText(visiblewWord);
+            }
+        }
+
+
         if (v == guessButton) {
             if (guessLet.length() != 1) {
                 guessLetter.setError("Write a letter");
-                return;
             }
-
-
-            spil.gætBogstav(guessLet);
-
-            guessLetter.setError(null);
+            new GuessLetterAsyncTask().execute();
 
             switch (spil.getAntalLiv()) {
                 case 5:
@@ -134,8 +188,6 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
                 default:
                     break;
             }
-
-            update();
             guessLetter.setText("");
         }
     }
@@ -153,37 +205,36 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
             totalTime();
 
             totalGames++;
-            TotalGame.putInt(totalGamesStr,totalGames);
+            TotalGame.putInt(totalGamesStr, totalGames);
             TotalGame.apply();
 
             won++;
             final SharedPreferences.Editor win = getSharedPreferences("Wins", Context.MODE_PRIVATE).edit();
-            win.putInt(wonStr,won);
+            win.putInt(wonStr, won);
             win.apply();
 
             final MediaPlayer win_sound = MediaPlayer.create(this, R.raw.win);
             win_sound.start();
 
             Intent i = new Intent(this, Win.class);
-            i.putExtra("currentScore",spil.getScore());
+            i.putExtra("currentScore", spil.getScore());
             startActivity(i);
             finish();
-        }
-        else if (spil.erSpilletTabt()) {
+        } else if (spil.erSpilletTabt()) {
             totalGames++;
-            TotalGame.putInt(totalGamesStr,totalGames);
+            TotalGame.putInt(totalGamesStr, totalGames);
             TotalGame.apply();
 
             lost++;
             final SharedPreferences.Editor lose = getSharedPreferences("Losses", Context.MODE_PRIVATE).edit();
-            lose.putInt(lostStr,lost);
+            lose.putInt(lostStr, lost);
             lose.apply();
 
             final MediaPlayer lose_sound = MediaPlayer.create(this, R.raw.lose);
             lose_sound.start();
 
             Intent i = new Intent(this, Lose.class);
-            i.putExtra("currentScore",spil.getScore());
+            i.putExtra("currentScore", spil.getScore());
             startActivity(i);
             finish();
         }
