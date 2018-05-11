@@ -12,7 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import static com.example.johnny.hangman.Play.spil;
+//import static com.example.johnny.hangman.Play.spil;
 
 /**
  * Created by Johnny on 12/11/17.
@@ -69,7 +69,9 @@ public class Win extends AppCompatActivity implements View.OnClickListener {
                 if(bundle != null)
                 {
                     String timeInSeconds = (String) bundle.get("time");
-                    time.setText("Time:" + timeInSeconds);
+                    time.setText("Time: " + timeInSeconds);
+                    double scoreDouble = (double) bundle.get("score");
+                    score.setText("Score: " + String.format("%.3f", scoreDouble));
 
                 }
             }
@@ -80,10 +82,10 @@ public class Win extends AppCompatActivity implements View.OnClickListener {
         playAgain.setOnClickListener(this);
 
         Intent i = getIntent();
-        currentScore = i.getIntExtra("currentScore",spil.getScore());
+        //currentScore = i.getIntExtra("currentScore",spil.getScore());
     
-        word.setText("You guessed the word: " + spil.getOrdet());
-        nrWrong.setText("Wrong guesses: " + spil.getNrWrong());
+        //word.setText("You guessed the word: " + spil.getOrdet());
+        //nrWrong.setText("Wrong guesses: " + spil.getNrWrong());
         score.setText("Score: " + currentScore);
 
         final SharedPreferences.Editor highScore = getSharedPreferences("Highscore", Context.MODE_PRIVATE).edit();

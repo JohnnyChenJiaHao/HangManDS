@@ -52,8 +52,8 @@ public class Highscore extends AppCompatActivity {
                     User user1 = new User("placeholder","1231","2","30");
                     User user2 = new User("placeholder","1212","2","30");
                     User user3 = new User("placeholder","12323","231","232");
-                    User user4 = new User("Placeholder","2312","12","231");
-                    User user5 = new User("Placeholder","Score: 1232","Tries: 132","Time: 22");
+                    User user4 = new User("placeholder","2312","12","231");
+                    User user5 = new User("placeholder","Score: 1232","Tries: 132","Time: 22");
                     data.add(user1);
                     data.add(user2);
                     data.add(user3);
