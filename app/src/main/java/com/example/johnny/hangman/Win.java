@@ -3,6 +3,8 @@ package com.example.johnny.hangman;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +28,8 @@ public class Win extends AppCompatActivity implements View.OnClickListener {
 
     Button menu, playAgain;
 
+    String finalWord;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,8 +41,40 @@ public class Win extends AppCompatActivity implements View.OnClickListener {
         time = (TextView) findViewById(R.id.time);
         score = (TextView) findViewById(R.id.score);
 
+
         menu = (Button) findViewById(R.id.menuButton);
         playAgain = (Button) findViewById(R.id.playAgainButton);
+
+        class GetLetterAsyncTask extends AsyncTask {
+            @Override
+            protected Object doInBackground(Object[] objects) {
+
+                RestClient getLetter = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/game/getordet");
+                try {
+                    getLetter.execute(RequestMethod.GET);
+                    finalWord = getLetter.getResponse();
+                    System.out.println(finalWord);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Object o) {
+                word.setText("" + finalWord.toString());
+                Intent intent = getIntent();
+                Bundle bundle = intent.getExtras();
+                if(bundle != null)
+                {
+                    String timeInSeconds = (String) bundle.get("time");
+                    time.setText("Time:" + timeInSeconds);
+
+                }
+            }
+        }
+        new GetLetterAsyncTask().execute();
 
         menu.setOnClickListener(this);
         playAgain.setOnClickListener(this);
@@ -48,7 +84,6 @@ public class Win extends AppCompatActivity implements View.OnClickListener {
     
         word.setText("You guessed the word: " + spil.getOrdet());
         nrWrong.setText("Wrong guesses: " + spil.getNrWrong());
-        time.setText("Time: " + Play.getTotalTime() + "s");
         score.setText("Score: " + currentScore);
 
         final SharedPreferences.Editor highScore = getSharedPreferences("Highscore", Context.MODE_PRIVATE).edit();

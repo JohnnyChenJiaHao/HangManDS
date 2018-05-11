@@ -28,12 +28,16 @@ public class Profile extends AppCompatActivity {
         final SharedPreferences lose = getSharedPreferences("Losses", Context.MODE_PRIVATE);
         final SharedPreferences totalGame = getSharedPreferences("TotalGames", Context.MODE_PRIVATE);
         final SharedPreferences highscores = getSharedPreferences("Highscore", Context.MODE_PRIVATE);
+        final SharedPreferences username = getSharedPreferences("usname",Context.MODE_PRIVATE);
 
 
         int wonData = win.getInt(wonStr,0);
         int lostData = lose.getInt(lostStr,0);
         int totalGameData = totalGame.getInt(totalGamesStr, 0);
         int highscoreData = highscores.getInt(highScoreStr,0);
+        String usname = username.getString("usname","");
+
+        System.out.println(usname);
 
         games = (TextView) findViewById(R.id.games);
         won = (TextView) findViewById(R.id.won);

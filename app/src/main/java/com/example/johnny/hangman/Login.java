@@ -1,16 +1,20 @@
 package com.example.johnny.hangman;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import org.json.JSONObject;
+import org.json.JSONStringer;
+
+import static com.example.johnny.hangman.RequestMethod.POST;
 
 /**
  * Created by Johnny on 24/10/17.
@@ -19,8 +23,11 @@ import android.widget.Toast;
 public class Login extends AppCompatActivity {
 
     EditText username, password;
-    Button OK;
+    Button OK, FPW;
     boolean auth = false;
+    public static String usn;
+    static SharedPreferences pref;
+    static SharedPreferences.Editor edit;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,29 +36,41 @@ public class Login extends AppCompatActivity {
         username = (EditText) findViewById(R.id.userName);
         password = (EditText) findViewById(R.id.password);
         OK = (Button) findViewById(R.id.login);
+        FPW = (Button) findViewById(R.id.ForgotPassword);
 
 
         class AsyncTaskURL extends AsyncTask {
             @Override
             protected Object doInBackground(Object[] objects) {
                 try {
+                    JSONObject logininfo = new JSONObject();
                     String un = username.getText().toString();
-                    System.out.println(un);
                     String pw = password.getText().toString();
-                    System.out.println(pw);
-                    RestClient client = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/service/validate/" + un + "/" + pw);
 
+
+                    RestClient client = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/login/" );
+                    String inputJsonString = "{" +
+                            "    \"username\"          :" + un +
+                            "," +
+                            "    \"password\"          : " + pw +
+                            "}";
+
+                    client.setJSONString(inputJsonString);
+                    client.addHeader("Content-Type", "appication/json"); // if required
 
                     try {
-                        client.Execute(RestClient.RequestMethod.GET);
+                        client.execute(RequestMethod.POST);
+                        if (client.getResponseCode() == 200) {
+                            auth = true;
+                        }
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        // handle error
                     }
+                    pref = getSharedPreferences(usn, Context.MODE_PRIVATE);
+                    edit = pref.edit();
+                    edit.putString("usname", usn);
+                    edit.commit();
 
-                    String response = client.getResponse();
-                    if(response != null)
-                        auth = true;
-                    System.out.println(response);
                 }
                 catch (Exception e) {
                     e.printStackTrace();
@@ -59,8 +78,10 @@ public class Login extends AppCompatActivity {
                 return null;
             }
 
+
             @Override
             protected void onPostExecute(Object o) {
+
                 if(auth) {
                     Intent intent = new Intent(Login.this, MainMenu.class);
                     startActivity(intent);
@@ -69,6 +90,7 @@ public class Login extends AppCompatActivity {
                 else{
                     Toast.makeText(Login.this, "Wrong credentials", Toast.LENGTH_LONG).show();
                 }
+
             }
         }
 
@@ -78,6 +100,15 @@ public class Login extends AppCompatActivity {
             public void onClick(View view) {
 
                 new AsyncTaskURL().execute();
+            }
+        });
+
+        FPW.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Login.this, ForgotPass.class);
+                startActivity(intent);
+                finish();
             }
         });
 
