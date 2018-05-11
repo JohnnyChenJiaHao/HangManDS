@@ -1,8 +1,6 @@
 package com.example.johnny.hangman;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,20 +11,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.easyandroidanimations.library.Animation;
 import com.easyandroidanimations.library.AnimationListener;
 import com.easyandroidanimations.library.ExplodeAnimation;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-
-import static com.example.johnny.hangman.RequestMethod.GET;
-import static com.example.johnny.hangman.RequestMethod.POST;
 
 /**
  * Created by Johnny on 23/10/17.
@@ -38,7 +26,7 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
 
     Button guessButton;
 
-    TextView wordView, letters, life, score;
+    TextView wordView, letters, tries, score;
 
     ImageView image;
 
@@ -50,7 +38,7 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
 
     static int totalGames, won, lost;
 
-    static String totalGamesStr, wonStr, lostStr, visiblewWord, lettersUsed;
+    static String totalGamesStr, wonStr, lostStr, visiblewWord, lettersUsed, numOfWrongLetters ;
     String[] wrongLetters;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,14 +54,14 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
         image = (ImageView) findViewById(R.id.image);
         letters = (TextView) findViewById(R.id.letters);
         wordView = (TextView) findViewById(R.id.word);
-        life = (TextView) findViewById(R.id.lives);
+        tries = (TextView) findViewById(R.id.lives);
         score = (TextView) findViewById(R.id.score);
         ;
 
         guessButton.setOnClickListener(this);
 
         letters.setText("Used letters: ");
-        life.setText("");
+        tries.setText("");
         score.setText("");
 
         class StartUpAsyncTask extends AsyncTask {
@@ -163,23 +151,20 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
                 RestClient WrongLetterclient = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/game/logstatus/");
                 try {
                     WrongLetterclient.execute(RequestMethod.GET);
-                    /*
-                    MANGLER
-                    MANGLER
-                    MANGLER
-                    MANGLER
-                    MANGLER
-                    MANGLER
-                    Mangler at indsætte forkerte bogstaver, da REST fucker.
-                    MANGLER
-                    MANGLER
-                    MANGLER
-                    MANGLER
-                     */
+                    //JSONObject status = new JSONObject(WrongLetterclient.getResponse());
+                    String WrongLetters = WrongLetterclient.getResponse();
+                    String tmp[] = WrongLetters.split(":");
+                    String tmp1[] = tmp[2].split("B");
+                    String wrongs [] = tmp1[0].split(" ");
+                    numOfWrongLetters = wrongs[1];
+                    numOfWrongLetters.replaceAll("\n","");
+                    numOfWrongLetters.replaceAll(" ", "");
+
 
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
                 return null;
             }
 
@@ -187,6 +172,8 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
             protected void onPostExecute(Object o) {
                 wordView.setText(visiblewWord);
                 letters.setText("Used letters: " + lettersUsed);
+                tries.setText("Number of tries: " + numOfWrongLetters);
+
                 if (!visiblewWord.contains("*")) {
                     tEnd = SystemClock.elapsedRealtime();
                     totalTime();
@@ -317,7 +304,7 @@ totalGames++;
 
      */
     private void update() {
-        life.setText("Lives: " + spil.getAntalLiv());
+        tries.setText("Lives: " + spil.getAntalLiv());
         score.setText("Score: " + spil.getScore());
 
     }
