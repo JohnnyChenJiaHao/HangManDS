@@ -188,8 +188,14 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
                 wordView.setText(visiblewWord);
                 letters.setText("Used letters: " + lettersUsed);
                 if (!visiblewWord.contains("*")) {
+                    tEnd = SystemClock.elapsedRealtime();
+                    totalTime();
+                    String time = String.valueOf(getTotalTime());
                     Intent i = new Intent(getApplicationContext(), Win.class);
-                    // i.putExtra("currentScore", spil.getScore());
+                     i.putExtra("time", time);
+                    MediaPlayer win_sound = MediaPlayer.create(getApplicationContext(), R.raw.win);
+                    win_sound.start();
+
                     startActivity(i);
                     finish();
                 }
@@ -287,8 +293,6 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
 
     /*
                             final SharedPreferences.Editor TotalGame = getSharedPreferences("TotalGames", Context.MODE_PRIVATE).edit();
-                        tEnd = SystemClock.elapsedRealtime();
-                        totalTime();
 
                         totalGames++;
                         TotalGame.putInt(totalGamesStr, totalGames);
