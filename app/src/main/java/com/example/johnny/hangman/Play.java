@@ -16,13 +16,25 @@ import com.easyandroidanimations.library.Animation;
 import com.easyandroidanimations.library.AnimationListener;
 import com.easyandroidanimations.library.ExplodeAnimation;
 
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static com.example.johnny.hangman.Play.getScore;
+import static com.example.johnny.hangman.RequestMethod.GET;
+import static com.example.johnny.hangman.RequestMethod.POST;
 /**
  * Created by Johnny on 23/10/17.
  */
 
 public class Play extends AppCompatActivity implements View.OnClickListener {
 
-    public static Galgelogik spil = new Galgelogik();
+    //public static Galgelogik spil = new Galgelogik();
 
     Button guessButton;
 
@@ -34,20 +46,25 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
 
     public static double totalTime;
 
-    long tStart, tEnd;
-
     static int totalGames, won, lost;
+    static Thread sc;
+
 
     static String totalGamesStr, wonStr, lostStr, visiblewWord, lettersUsed, numOfWrongLetters ;
     String[] wrongLetters;
+
+    static long tStart, tEnd, tDelta;
+    static double elapsedSeconds, temp1, temp2, temp3;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.play);
 
+        // spil.setScore(0);
+        // spil.setStreak(0);
         tStart = SystemClock.elapsedRealtime();
-        spil.setScore(0);
-        spil.setStreak(0);
+        sc = new Thread(new score());
+        sc.start();
 
         guessLetter = (EditText) findViewById(R.id.guessLetter);
         guessButton = (Button) findViewById(R.id.guessButton);
@@ -56,7 +73,7 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
         wordView = (TextView) findViewById(R.id.word);
         tries = (TextView) findViewById(R.id.lives);
         score = (TextView) findViewById(R.id.score);
-        ;
+
 
         guessButton.setOnClickListener(this);
 
@@ -64,9 +81,11 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
         tries.setText("");
         score.setText("");
 
+
         class StartUpAsyncTask extends AsyncTask {
             @Override
             protected Object doInBackground(Object[] objects) {
+
                 try {
                     RestClient Nulstilclient = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/game/nulstil");
                     try {
@@ -175,11 +194,13 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
                 tries.setText("Number of tries: " + numOfWrongLetters);
 
                 if (!visiblewWord.contains("*")) {
-                    tEnd = SystemClock.elapsedRealtime();
+                    //tEnd = SystemClock.elapsedRealtime();
+                    getScore();
                     totalTime();
                     String time = String.valueOf(getTotalTime());
                     Intent i = new Intent(getApplicationContext(), Win.class);
-                     i.putExtra("time", time);
+                    i.putExtra("time", time);
+                    i.putExtra("score", temp3);
                     MediaPlayer win_sound = MediaPlayer.create(getApplicationContext(), R.raw.win);
                     win_sound.start();
 
@@ -252,28 +273,28 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
             }
             new GuessLetterAsyncTask().execute();
 
-            switch (spil.getAntalLiv()) {
-                case 5:
-                    image.setImageResource(R.mipmap.forkert1);
-                    break;
-                case 4:
-                    image.setImageResource(R.mipmap.forkert2);
-                    break;
-                case 3:
-                    image.setImageResource(R.mipmap.forkert3);
-                    break;
-                case 2:
-                    image.setImageResource(R.mipmap.forkert4);
-                    break;
-                case 1:
-                    image.setImageResource(R.mipmap.forkert5);
-                    break;
-                case 0:
-                    image.setImageResource(R.mipmap.forkert6);
-                    break;
-                default:
-                    break;
-            }
+//            switch (spil.getAntalLiv()) {
+//                case 5:
+//                    image.setImageResource(R.mipmap.forkert1);
+//                    break;
+//                case 4:
+//                    image.setImageResource(R.mipmap.forkert2);
+//                    break;
+//                case 3:
+//                    image.setImageResource(R.mipmap.forkert3);
+//                    break;
+//                case 2:
+//                    image.setImageResource(R.mipmap.forkert4);
+//                    break;
+//                case 1:
+//                    image.setImageResource(R.mipmap.forkert5);
+//                    break;
+//                case 0:
+//                    image.setImageResource(R.mipmap.forkert6);
+//                    break;
+//                default:
+//                    break;
+//            }
             guessLetter.setText("");
         }
     }
@@ -301,19 +322,58 @@ totalGames++;
                         final SharedPreferences.Editor lose = getSharedPreferences("Losses", Context.MODE_PRIVATE).edit();
                         lose.putInt(lostStr, lost);
                         lose.apply();
-
-     */
-    private void update() {
-        tries.setText("Lives: " + spil.getAntalLiv());
-        score.setText("Score: " + spil.getScore());
-
-    }
-
-    public void totalTime() {
+     */    
+  public void totalTime() {
         totalTime = (tEnd - tStart) / 1000;
     }
 
     public static double getTotalTime() {
         return totalTime;
+    }
+
+
+    public static void getScore() {
+        //Grabbing time and converting to seconds.
+        RestClient visibleWordclient = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/game/getsynligtord");
+        try {
+            visibleWordclient.execute(RequestMethod.GET);
+            visiblewWord = visibleWordclient.getResponse().toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        RestClient Statusclient = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/game/getbrugtebogstaver");
+        try {
+            Statusclient.execute(RequestMethod.GET);
+            lettersUsed = Statusclient.getResponse().replaceAll("\"", "");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        tEnd = SystemClock.elapsedRealtime();
+        tDelta = tEnd - tStart;
+        elapsedSeconds = tDelta / 1000.0;
+
+        //Random "algorithm" i came up with
+        //to calculate score relative to word length,
+        //time spend and amount of misses.
+        temp1 = elapsedSeconds * (lettersUsed.length() + 1);
+        temp2 = temp1 / (visiblewWord.length() + 1);
+        temp3 = (100 / temp2) * 100;
+    }
+
+    //Score Thread for calculating and updating score
+    public static class score implements Runnable {
+        public void run() {
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Play.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            getScore();
+            //System.out.println("Score: "+String.format("%.3f", temp3));
+
+        }
     }
 }
