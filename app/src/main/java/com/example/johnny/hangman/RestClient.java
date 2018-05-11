@@ -34,6 +34,7 @@ import android.content.Context;
 enum RequestMethod {
     DELETE, GET, POST, PUT
 }
+//This client is borrowed by http://lukencode.com/2010/04/27/calling-web-services-in-android-using-httpclient/
 
 public class RestClient {
 
