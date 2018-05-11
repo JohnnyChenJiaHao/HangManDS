@@ -17,17 +17,9 @@ import com.easyandroidanimations.library.AnimationListener;
 import com.easyandroidanimations.library.ExplodeAnimation;
 
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.example.johnny.hangman.Play.getScore;
-import static com.example.johnny.hangman.RequestMethod.GET;
-import static com.example.johnny.hangman.RequestMethod.POST;
 /**
  * Created by Johnny on 23/10/17.
  */
@@ -50,7 +42,7 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
     static Thread sc;
 
 
-    static String totalGamesStr, wonStr, lostStr, visiblewWord, lettersUsed, numOfWrongLetters ;
+    static String totalGamesStr, wonStr, lostStr, visiblewWord, lettersUsed, numOfTries;
     String[] wrongLetters;
 
     static long tStart, tEnd, tDelta;
@@ -175,9 +167,9 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
                     String tmp[] = WrongLetters.split(":");
                     String tmp1[] = tmp[2].split("B");
                     String wrongs [] = tmp1[0].split(" ");
-                    numOfWrongLetters = wrongs[1];
-                    numOfWrongLetters.replaceAll("\n","");
-                    numOfWrongLetters.replaceAll(" ", "");
+                    numOfTries = wrongs[1];
+                    numOfTries.replaceAll("\n","");
+                    numOfTries.replaceAll(" ", "");
 
 
                 } catch (Exception e) {
@@ -191,7 +183,7 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
             protected void onPostExecute(Object o) {
                 wordView.setText(visiblewWord);
                 letters.setText("Used letters: " + lettersUsed);
-                tries.setText("Number of tries: " + numOfWrongLetters);
+                tries.setText("Number of tries: " + numOfTries);
 
                 if (!visiblewWord.contains("*")) {
                     //tEnd = SystemClock.elapsedRealtime();
@@ -201,6 +193,7 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
                     Intent i = new Intent(getApplicationContext(), Win.class);
                     i.putExtra("time", time);
                     i.putExtra("score", temp3);
+                    i.putExtra("tries", numOfTries);
                     MediaPlayer win_sound = MediaPlayer.create(getApplicationContext(), R.raw.win);
                     win_sound.start();
 

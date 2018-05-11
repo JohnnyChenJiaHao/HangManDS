@@ -28,7 +28,7 @@ public class Win extends AppCompatActivity implements View.OnClickListener {
 
     Button menu, playAgain;
 
-    String finalWord;
+    String finalWord, numOfTries;
 
 
     @Override
@@ -72,6 +72,8 @@ public class Win extends AppCompatActivity implements View.OnClickListener {
                     time.setText("Time: " + timeInSeconds);
                     double scoreDouble = (double) bundle.get("score");
                     score.setText("Score: " + String.format("%.3f", scoreDouble));
+                    numOfTries = (String) bundle.get("tries");
+                    nrWrong.setText("Number of wrong guesses: " + numOfTries);
 
                 }
             }
@@ -81,16 +83,7 @@ public class Win extends AppCompatActivity implements View.OnClickListener {
         menu.setOnClickListener(this);
         playAgain.setOnClickListener(this);
 
-        Intent i = getIntent();
-        //currentScore = i.getIntExtra("currentScore",spil.getScore());
-    
-        //word.setText("You guessed the word: " + spil.getOrdet());
-        //nrWrong.setText("Wrong guesses: " + spil.getNrWrong());
-        score.setText("Score: " + currentScore);
 
-        final SharedPreferences.Editor highScore = getSharedPreferences("Highscore", Context.MODE_PRIVATE).edit();
-        highScore.putInt(highScoreStr,currentScore);
-        highScore.apply();
     }
 
     @Override
