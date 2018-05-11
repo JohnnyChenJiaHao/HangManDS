@@ -19,6 +19,13 @@ import com.easyandroidanimations.library.Animation;
 import com.easyandroidanimations.library.AnimationListener;
 import com.easyandroidanimations.library.ExplodeAnimation;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+import static com.example.johnny.hangman.RequestMethod.GET;
 import static com.example.johnny.hangman.RequestMethod.POST;
 
 /**
@@ -43,7 +50,8 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
 
     static int totalGames, won, lost;
 
-    static String totalGamesStr, wonStr, lostStr, visiblewWord;
+    static String totalGamesStr, wonStr, lostStr, visiblewWord, lettersUsed;
+    String[] wrongLetters;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,21 +62,19 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
         spil.setStreak(0);
 
         guessLetter = (EditText) findViewById(R.id.guessLetter);
-
         guessButton = (Button) findViewById(R.id.guessButton);
-
         image = (ImageView) findViewById(R.id.image);
-
         letters = (TextView) findViewById(R.id.letters);
         wordView = (TextView) findViewById(R.id.word);
         life = (TextView) findViewById(R.id.lives);
         score = (TextView) findViewById(R.id.score);
+        ;
 
         guessButton.setOnClickListener(this);
 
-        letters.setText("Used letters: " + spil.getBrugteBogstaver());
-        life.setText("Lives: " + spil.getAntalLiv());
-        score.setText("Score: " + spil.getScore());
+        letters.setText("Used letters: ");
+        life.setText("");
+        score.setText("");
 
         class StartUpAsyncTask extends AsyncTask {
             @Override
@@ -103,9 +109,7 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
         new StartUpAsyncTask().execute();
 
 
-
     }
-
 
 
     public void onClick(View v) {
@@ -130,7 +134,7 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
                                 "}";
 
                         guessLetterclient.setJSONString(inputJsonString);
-                        guessLetterclient.addHeader("Content-Type", "appication/json"); // if required
+                        guessLetterclient.addHeader("Content-Type", "appication/json");
                         guessLetterclient.execute(RequestMethod.POST);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -147,19 +151,108 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
                     e.printStackTrace();
                 }
 
-                RestClient Statusclient = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/game/logstatus");
-                System.out.println(Statusclient.getResponseCode());
-                System.out.println(Statusclient.getResponse());
+                RestClient Statusclient = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/game/getbrugtebogstaver");
+                try {
+                    Statusclient.execute(RequestMethod.GET);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                lettersUsed = Statusclient.getResponse().replaceAll("\"", "");
+
+
+                RestClient WrongLetterclient = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/game/logstatus/");
+                try {
+                    WrongLetterclient.execute(RequestMethod.GET);
+                    /*
+                    MANGLER
+                    MANGLER
+                    MANGLER
+                    MANGLER
+                    MANGLER
+                    MANGLER
+                    Mangler at indsætte forkerte bogstaver, da REST fucker.
+                    MANGLER
+                    MANGLER
+                    MANGLER
+                    MANGLER
+                     */
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 return null;
             }
 
             @Override
             protected void onPostExecute(Object o) {
                 wordView.setText(visiblewWord);
+                letters.setText("Used letters: " + lettersUsed);
+                if (!visiblewWord.contains("*")) {
+                    Intent i = new Intent(getApplicationContext(), Win.class);
+                    // i.putExtra("currentScore", spil.getScore());
+                    startActivity(i);
+                    finish();
+                }
+                /*
+                if(AntalForkerte = 7 (tror jeg er maks antal før man dør)){
+                    Intent i = new Intent(getApplicationContext(), Lose.class);
+                    i.putExtra("currentScore", spil.getScore());
+                    startActivity(i);
+                    finish();
+                }
+                 */
+                /*
+                RestClient GameWonclient = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/game/erspilletvundet");
+                try {
+                    GameWonclient.execute(GET);
+                    String response = GameWonclient.getResponse();
+                    System.out.println(response);
+                    if (response.equals("true")) {
+
+                        //MediaPlayer win_sound = MediaPlayer.create(getApplicationContext(), R.raw.win);
+                        //win_sound.start();
+
+                        Intent i = new Intent(getApplicationContext(), Win.class);
+                        // i.putExtra("currentScore", spil.getScore());
+                        startActivity(i);
+                        finish();
+                    } else {
+                        RestClient GameLostclient = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/game/erspillettabt");
+                        try {
+                            GameLostclient.execute(GET);
+                            if (GameLostclient.getResponse().equals("true")) {
+                                // final MediaPlayer lose_sound = MediaPlayer.create(getApplicationContext(), R.raw.lose);
+                                //lose_sound.start();
+
+                                Intent i = new Intent(getApplicationContext(), Lose.class);
+                                i.putExtra("currentScore", spil.getScore());
+                                startActivity(i);
+                                finish();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                */
             }
         }
 
+            /*
+            MANGLER
+            MANGLER
+            MANGLER
+            MANGLER
+            MANGLER
+            BILLEDER NEDENFOR KAN IKKE LAVES FØR REST "LOGSTATUS" VIRKER
+            MANGLER
+            MANGLER
+            MANGLER
+            MANGLER
 
+ */
         if (v == guessButton) {
             if (guessLet.length() != 1) {
                 guessLetter.setError("Write a letter");
@@ -192,52 +285,37 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
+    /*
+                            final SharedPreferences.Editor TotalGame = getSharedPreferences("TotalGames", Context.MODE_PRIVATE).edit();
+                        tEnd = SystemClock.elapsedRealtime();
+                        totalTime();
+
+                        totalGames++;
+                        TotalGame.putInt(totalGamesStr, totalGames);
+                        TotalGame.apply();
+
+                        won++;
+                        final SharedPreferences.Editor win = getSharedPreferences("Wins", Context.MODE_PRIVATE).edit();
+                        win.putInt(wonStr, won);
+                        win.apply();
+
+
+
+
+totalGames++;
+                        TotalGame.putInt(totalGamesStr, totalGames);
+                        TotalGame.apply();
+
+                        lost++;
+                        final SharedPreferences.Editor lose = getSharedPreferences("Losses", Context.MODE_PRIVATE).edit();
+                        lose.putInt(lostStr, lost);
+                        lose.apply();
+
+     */
     private void update() {
-        wordView.setText(spil.getSynligtOrd());
-        letters.setText("Used letters: " + spil.getBrugteBogstaver());
         life.setText("Lives: " + spil.getAntalLiv());
         score.setText("Score: " + spil.getScore());
 
-        final SharedPreferences.Editor TotalGame = getSharedPreferences("TotalGames", Context.MODE_PRIVATE).edit();
-
-        if (spil.erSpilletVundet()) {
-            tEnd = SystemClock.elapsedRealtime();
-            totalTime();
-
-            totalGames++;
-            TotalGame.putInt(totalGamesStr, totalGames);
-            TotalGame.apply();
-
-            won++;
-            final SharedPreferences.Editor win = getSharedPreferences("Wins", Context.MODE_PRIVATE).edit();
-            win.putInt(wonStr, won);
-            win.apply();
-
-            final MediaPlayer win_sound = MediaPlayer.create(this, R.raw.win);
-            win_sound.start();
-
-            Intent i = new Intent(this, Win.class);
-            i.putExtra("currentScore", spil.getScore());
-            startActivity(i);
-            finish();
-        } else if (spil.erSpilletTabt()) {
-            totalGames++;
-            TotalGame.putInt(totalGamesStr, totalGames);
-            TotalGame.apply();
-
-            lost++;
-            final SharedPreferences.Editor lose = getSharedPreferences("Losses", Context.MODE_PRIVATE).edit();
-            lose.putInt(lostStr, lost);
-            lose.apply();
-
-            final MediaPlayer lose_sound = MediaPlayer.create(this, R.raw.lose);
-            lose_sound.start();
-
-            Intent i = new Intent(this, Lose.class);
-            i.putExtra("currentScore", spil.getScore());
-            startActivity(i);
-            finish();
-        }
     }
 
     public void totalTime() {
