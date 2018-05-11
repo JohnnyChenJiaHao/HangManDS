@@ -15,6 +15,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static com.example.johnny.hangman.RequestMethod.GET;
+
 /**
  * Created by sammy on 08-05-2018.
  */
@@ -37,24 +39,36 @@ public class Highscore extends AppCompatActivity {
             @Override
             protected Object doInBackground(Object[] objects) {
                 try {
-                    RestClient client = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/service/score");
+                    RestClient client = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/score");
+
                     try {
-                        client.Execute(RestClient.RequestMethod.GET);
+                        client.execute(GET);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                     String response = client.getResponse();
                     JSONArray jsonArray = new JSONArray(response);
                     data = new ArrayList<User>();
+                    User user1 = new User("placeholder","1231","2","30");
+                    User user2 = new User("placeholder","1212","2","30");
+                    User user3 = new User("placeholder","12323","231","232");
+                    User user4 = new User("Placeholder","2312","12","231");
+                    User user5 = new User("Placeholder","Score: 1232","Tries: 132","Time: 22");
+                    data.add(user1);
+                    data.add(user2);
+                    data.add(user3);
+                    data.add(user4);
+                    data.add(user5);
+
+
 
                     for(int i = 0; i < jsonArray.length(); i++){
                         JSONObject object = jsonArray.getJSONObject(i);
-                        User user = new User("", "","","");
-                        user.setStudent_Id(object.getString("student_Id"));
-                        user.setScore(object.getString("score"));
-                        user.setNumberOfTries(object.getString("number_of_tries"));
-                        user.setTime_used(object.getString("time_used"));
-                        data.add(user);
+                        data.get(i).setScore(object.getString("score"));
+                        data.get(i).setStudent_Id(object.getString("student_Id"));
+                        data.get(i).setTime_used(object.getString("time_used"));
+                        data.get(i).setNumberOfTries(object.getString("number_of_tries"));
+
                     }
                 }
                 catch (Exception e) {

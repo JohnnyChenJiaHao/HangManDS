@@ -46,7 +46,7 @@ public class User {
     }
 
     public void setTime_used(String time_used) {
-        this.time_used = time_used;
+        this.time_used = "Time: " + time_used;
     }
 
     public String toString(){
