@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import static com.example.johnny.hangman.Play.spil;
+//import static com.example.johnny.hangman.Play.spil;
 
 /**
  * Created by Johnny on 12/11/17.
@@ -34,9 +34,9 @@ public class Lose extends AppCompatActivity implements View.OnClickListener {
         playAgain.setOnClickListener(this);
 
         Intent i = getIntent();
-        currentScore = i.getIntExtra("currentScore",spil.getScore());
+        //currentScore = i.getIntExtra("currentScore",spil.getScore());
 
-        word.setText("The word was: " + spil.getOrdet());
+        //word.setText("The word was: " + spil.getOrdet());
         score.setText("Score: " + currentScore);
     }
 
