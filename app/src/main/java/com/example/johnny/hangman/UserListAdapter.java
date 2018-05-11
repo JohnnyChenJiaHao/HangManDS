@@ -17,6 +17,7 @@ import java.util.List;
  * Created by sammy on 08-05-2018.
  */
 
+//This class is inspired/borrowed by https://github.com/mitchtabian/ListViews
 public class UserListAdapter extends ArrayAdapter<User>{
     private Context mContext;
     private int mResource;
