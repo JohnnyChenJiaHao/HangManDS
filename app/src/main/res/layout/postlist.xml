@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="100">
+
+
+    <TextView
+        android:id="@+id/student_Id"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Student_Id"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="20sp">
+
+    </TextView>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="33.3">
+
+        <TextView
+            android:textAlignment="textStart"
+            android:id="@+id/numberoftries"
+            android:text="numberOfTries"
+            android:textSize="15sp"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:textColor="@android:color/white"
+            >
+        </TextView>
+
+        <TextView
+            android:textAlignment="textStart"
+            android:id="@+id/time_used"
+            android:text="time_Used"
+            android:textSize="15sp"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:textColor="@android:color/white"
+            >
+        </TextView>
+
+        <TextView
+            android:textAlignment="textStart"
+            android:text="score"
+            android:textColor="@android:color/white"
+            android:id="@+id/score"
+            android:textSize="15sp"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            >
+        </TextView>
+</LinearLayout>
+
+</LinearLayout>

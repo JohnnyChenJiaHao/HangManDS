@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 public class MainMenu extends AppCompatActivity implements View.OnClickListener {
 
-    Button playButton, profileButton, helpButton, resetButton;
+    Button playButton, profileButton, helpButton, resetButton, Highscore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,11 +24,13 @@ public class MainMenu extends AppCompatActivity implements View.OnClickListener 
         profileButton = (Button) findViewById(R.id.profileButton);
         helpButton = (Button) findViewById(R.id.helpButton);
         resetButton = (Button) findViewById(R.id.resetButton);
+        Highscore = (Button) findViewById(R.id.Highscore);
 
         playButton.setOnClickListener(this);
         profileButton.setOnClickListener(this);
         helpButton.setOnClickListener(this);
         resetButton.setOnClickListener(this);
+        Highscore.setOnClickListener(this);
     }
 
     public void onClick(View v) {
@@ -45,6 +47,10 @@ public class MainMenu extends AppCompatActivity implements View.OnClickListener 
 
         else if (v == helpButton) {
             Intent i = new Intent(this, Help.class);
+            startActivity(i);
+        }
+        else if(v==Highscore) {
+            Intent i = new Intent(this, Highscore.class);
             startActivity(i);
         }
 

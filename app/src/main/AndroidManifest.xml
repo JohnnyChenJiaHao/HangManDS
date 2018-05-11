@@ -6,37 +6,28 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        tools:replace="android:icon,android:label,android:theme"
         android:allowBackup="true"
         android:icon="@mipmap/icon"
         android:label="@string/s165543_Jia_Hao_Johnny_Chen"
         android:roundIcon="@mipmap/icon"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.NoActionBar">
-        <activity
-            android:name=".MainMenu">
+        android:theme="@style/Theme.AppCompat.NoActionBar"
+        tools:replace="android:icon,android:label,android:theme">
+        <activity android:name=".Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".Play"
-            />
-
-        <activity android:name=".Profile"
-            />
-
-        <activity android:name=".Help"
-            />
-
-        <activity android:name=".Win"
-            />
-
-        <activity android:name=".Lose"
-            />
-
+        <activity android:name=".Play" />
+        <activity android:name=".Profile" />
+        <activity android:name=".Help" />
+        <activity android:name=".Win" />
+        <activity android:name=".Lose" />
+        <activity android:name=".MainMenu" />
+        <activity android:name=".Highscore" />
+        <activity android:name=".ForgotPass" />
     </application>
 
 </manifest>
