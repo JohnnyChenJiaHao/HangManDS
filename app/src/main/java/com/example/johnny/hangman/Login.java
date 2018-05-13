@@ -25,7 +25,7 @@ public class Login extends AppCompatActivity {
     EditText username, password;
     Button OK, FPW;
     boolean auth = false;
-    public static String usn;
+    String authcode;
     static SharedPreferences pref;
     static SharedPreferences.Editor edit;
     @Override
@@ -37,13 +37,14 @@ public class Login extends AppCompatActivity {
         password = (EditText) findViewById(R.id.password);
         OK = (Button) findViewById(R.id.login);
         FPW = (Button) findViewById(R.id.ForgotPassword);
+        pref = getSharedPreferences("PREFS", 0);
+        edit = pref.edit();
 
 
         class AsyncTaskURL extends AsyncTask {
             @Override
             protected Object doInBackground(Object[] objects) {
                 try {
-                    JSONObject logininfo = new JSONObject();
                     String un = username.getText().toString();
                     String pw = password.getText().toString();
 
@@ -56,20 +57,19 @@ public class Login extends AppCompatActivity {
                             "}";
 
                     client.setJSONString(inputJsonString);
-                    client.addHeader("Content-Type", "appication/json"); // if required
+                    client.addHeader("Content-Type", "appication/json");
 
                     try {
                         client.execute(RequestMethod.POST);
                         if (client.getResponseCode() == 200) {
                             auth = true;
+                            authcode = client.getResponse();
                         }
                     } catch (Exception e) {
                         // handle error
                     }
-                    pref = getSharedPreferences(usn, Context.MODE_PRIVATE);
-                    edit = pref.edit();
-                    edit.putString("usname", usn);
-                    edit.commit();
+                    pref = getSharedPreferences("usn", 0);
+                    edit.putString("username", un);
 
                 }
                 catch (Exception e) {
@@ -84,6 +84,8 @@ public class Login extends AppCompatActivity {
 
                 if(auth) {
                     Intent intent = new Intent(Login.this, MainMenu.class);
+                    edit.putString("auth", authcode);
+                    edit.commit();
                     startActivity(intent);
                     finish();
                 }
