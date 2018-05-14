@@ -20,9 +20,7 @@ import com.easyandroidanimations.library.ExplodeAnimation;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Created by Johnny on 23/10/17.
- */
+
 
 public class Play extends AppCompatActivity implements View.OnClickListener {
 
