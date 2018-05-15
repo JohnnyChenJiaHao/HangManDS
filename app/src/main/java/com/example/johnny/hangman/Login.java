@@ -25,7 +25,7 @@ public class Login extends AppCompatActivity {
     EditText username, password;
     Button OK, FPW;
     boolean auth = false;
-    String authcode;
+    String authcode, un, pw;
     static SharedPreferences pref;
     static SharedPreferences.Editor edit;
     @Override
@@ -45,8 +45,8 @@ public class Login extends AppCompatActivity {
             @Override
             protected Object doInBackground(Object[] objects) {
                 try {
-                    String un = username.getText().toString();
-                    String pw = password.getText().toString();
+                    un = username.getText().toString();
+                    pw = password.getText().toString();
 
 
                     RestClient client = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/login/" );
@@ -68,8 +68,9 @@ public class Login extends AppCompatActivity {
                     } catch (Exception e) {
                         // handle error
                     }
-                    pref = getSharedPreferences("usn", 0);
-                    edit.putString("username", un);
+
+
+
 
                 }
                 catch (Exception e) {
@@ -85,6 +86,7 @@ public class Login extends AppCompatActivity {
                 if(auth) {
                     Intent intent = new Intent(Login.this, MainMenu.class);
                     edit.putString("auth", authcode);
+                    edit.putString("user",un);
                     edit.commit();
                     startActivity(intent);
                     finish();

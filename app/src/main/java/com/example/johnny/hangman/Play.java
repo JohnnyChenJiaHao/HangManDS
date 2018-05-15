@@ -1,6 +1,8 @@
 package com.example.johnny.hangman;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -64,6 +66,7 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
         score = (TextView) findViewById(R.id.score);
 
 
+
         guessButton.setOnClickListener(this);
 
         letters.setText("Used letters: ");
@@ -86,7 +89,11 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
                     RestClient client = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/game/getsynligtord");
                     try {
                         client.execute(RequestMethod.GET);
-                        visiblewWord = client.getResponse().toString();
+                        if(client.getResponseCode() == 200){
+                            visiblewWord = client.getResponse().toString();
+                        }else
+                            visiblewWord = "test";
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -192,7 +199,8 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
                 wordView.setText(visiblewWord);
                 letters.setText("Used letters: " + lettersUsed);
                 tries.setText("Number of tries: " + numOfTries);
-
+                final SharedPreferences.Editor TotalGame = getSharedPreferences("TotalGames", Context.MODE_PRIVATE).edit();
+                final SharedPreferences.Editor lose = getSharedPreferences("Losses", Context.MODE_PRIVATE).edit();
                 if (!visiblewWord.contains("*")) {
                     //tEnd = SystemClock.elapsedRealtime();
                     temp3 = getScore();
@@ -202,6 +210,16 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
                     i.putExtra("time", time);
                     i.putExtra("score", temp3);
                     i.putExtra("tries", numtries);
+
+
+                    totalGames++;
+                    TotalGame.putInt(totalGamesStr, totalGames);
+                    TotalGame.apply();
+
+                    won++;
+                    final SharedPreferences.Editor win = getSharedPreferences("Wins", Context.MODE_PRIVATE).edit();
+                    win.putInt(wonStr, won);
+                    win.apply();
                     MediaPlayer win_sound = MediaPlayer.create(getApplicationContext(), R.raw.win);
                     win_sound.start();
 
@@ -212,6 +230,13 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
                         final MediaPlayer lose_sound = MediaPlayer.create(getApplicationContext(), R.raw.lose);
                         lose_sound.start();
                         temp3 = getScore();
+                        totalGames++;
+                        TotalGame.putInt(totalGamesStr, totalGames);
+                        TotalGame.apply();
+
+                        lost++;
+                        lose.putInt(lostStr, lost);
+                        lose.apply();
                         Intent i = new Intent(getApplicationContext(), Lose.class);
                         i.putExtra("currentScore", temp3);
                         i.putExtra("word", lostword);
@@ -254,30 +279,7 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
-    /*
-                            final SharedPreferences.Editor TotalGame = getSharedPreferences("TotalGames", Context.MODE_PRIVATE).edit();
 
-                        totalGames++;
-                        TotalGame.putInt(totalGamesStr, totalGames);
-                        TotalGame.apply();
-
-                        won++;
-                        final SharedPreferences.Editor win = getSharedPreferences("Wins", Context.MODE_PRIVATE).edit();
-                        win.putInt(wonStr, won);
-                        win.apply();
-
-
-
-
-totalGames++;
-                        TotalGame.putInt(totalGamesStr, totalGames);
-                        TotalGame.apply();
-
-                        lost++;
-                        final SharedPreferences.Editor lose = getSharedPreferences("Losses", Context.MODE_PRIVATE).edit();
-                        lose.putInt(lostStr, lost);
-                        lose.apply();
-     */
     public void totalTime() {
         totalTime = (tEnd - tStart) / 1000;
     }
