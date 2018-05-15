@@ -53,6 +53,14 @@ public class Win extends AppCompatActivity implements View.OnClickListener {
         auth = pref.getString("auth", "failed");
         username = pref.getString("username", "failed");
 
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        timeInSeconds = (Double) bundle.get("time");
+        time.setText("Time: " + timeInSeconds);
+        scoreDouble = (double) bundle.get("score");
+        score.setText("Score: " + String.format("%.3f", scoreDouble));
+        numOfTries = (int) bundle.get("tries");
+        nrWrong.setText("Number of wrong guesses: " + numOfTries);
         class GetLetterAsyncTask extends AsyncTask {
             @Override
             protected Object doInBackground(Object[] objects) {
@@ -74,12 +82,13 @@ public class Win extends AppCompatActivity implements View.OnClickListener {
                 Intent intent = getIntent();
                 Bundle bundle = intent.getExtras();
                 if (bundle != null) {
-                    timeInSeconds = (Double) bundle.get("time");
                     time.setText("Time: " + timeInSeconds);
-                    scoreDouble = (double) bundle.get("score");
                     score.setText("Score: " + String.format("%.3f", scoreDouble));
-                    numOfTries = (int) bundle.get("tries");
                     nrWrong.setText("Number of wrong guesses: " + numOfTries);
+                    System.out.println("TEST1");
+                    System.out.println(scoreDouble);
+                    System.out.println(numOfTries);
+                    System.out.println(timeInSeconds);
                 }
             }
         }
@@ -90,6 +99,11 @@ public class Win extends AppCompatActivity implements View.OnClickListener {
         class PostScoreAsyncTask extends AsyncTask {
             @Override
             protected Object doInBackground(Object[] objects) {
+                    System.out.println("HEJ");
+                    System.out.println(scoreDouble);
+                    System.out.println(numOfTries);
+                    System.out.println(timeInSeconds);
+
 
                 RestClient postclient = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/postscore/");
                 String inputJsonString =
