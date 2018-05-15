@@ -46,6 +46,8 @@ public class ForgotPass extends AppCompatActivity {
 
                 } catch (Exception e) {
                     e.printStackTrace();
+                    System.out.println("Missing connection");
+                    Toast.makeText(getApplicationContext(), "Missing connection, please try again later", Toast.LENGTH_LONG).show();
                 }
                 return null;
             }

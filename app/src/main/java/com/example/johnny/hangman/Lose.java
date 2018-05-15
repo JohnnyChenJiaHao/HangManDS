@@ -39,10 +39,11 @@ public class Lose extends AppCompatActivity implements View.OnClickListener {
         if (bundle != null) {
             finalword = (String) bundle.get("word");
             currentScore = (Double) bundle.get("currentScore");
+
         }
 
         //word.setText("The word was: " + spil.getOrdet());
-        score.setText("Score: " + currentScore);
+        score.setText("score: " + String.format("%.3f",currentScore));
         word.setText("Word: " + finalword);
     }
 

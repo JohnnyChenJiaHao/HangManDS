@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -72,6 +73,8 @@ public class Highscore extends AppCompatActivity {
                     }
                 }
                 catch (Exception e) {
+                    System.out.println("Missing connection");
+                    Toast.makeText(getApplicationContext(), "Missing connection, please try again later", Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
                 return null;
