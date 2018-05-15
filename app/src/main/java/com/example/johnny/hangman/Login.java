@@ -66,7 +66,8 @@ public class Login extends AppCompatActivity {
                             authcode = client.getResponse();
                         }
                     } catch (Exception e) {
-                        // handle error
+                        System.out.println("Missing connection");
+                        Toast.makeText(getApplicationContext(), "Missing connection, please try again later", Toast.LENGTH_LONG).show();
                     }
 
 

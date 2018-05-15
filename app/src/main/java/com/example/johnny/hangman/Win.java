@@ -126,6 +126,8 @@ public class Win extends AppCompatActivity implements View.OnClickListener {
                     System.out.println(postclient.getResponse());
 
                 } catch (Exception e) {
+                    System.out.println("Missing connection");
+                    Toast.makeText(getApplicationContext(), "Missing connection, please try again later", Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
 
