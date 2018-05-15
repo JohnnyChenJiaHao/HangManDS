@@ -58,24 +58,21 @@ public class MainMenu extends AppCompatActivity implements View.OnClickListener 
 
             AlertDialog.Builder reset = new AlertDialog.Builder(this);
             reset.setTitle("Reset Data");
-            reset.setMessage("This will erase the data and cannot be undone");
+            reset.setMessage("This will only erase win, loss and amount of games played, not your highscore!");
             reset.setPositiveButton("Reset",new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     final SharedPreferences.Editor win = getSharedPreferences("Wins", Context.MODE_PRIVATE).edit();
                     final SharedPreferences.Editor lose = getSharedPreferences("Losses", Context.MODE_PRIVATE).edit();
                     final SharedPreferences.Editor totalGame = getSharedPreferences("TotalGames", Context.MODE_PRIVATE).edit();
-                    final SharedPreferences.Editor highscore = getSharedPreferences("Highscore", Context.MODE_PRIVATE).edit();
 
                     win.clear();
                     lose.clear();
                     totalGame.clear();
-                    highscore.clear();
 
                     win.apply();
                     lose.apply();
                     totalGame.apply();
-                    highscore.apply();
 
                     Play.totalGames = 0;
                     Play.won = 0;

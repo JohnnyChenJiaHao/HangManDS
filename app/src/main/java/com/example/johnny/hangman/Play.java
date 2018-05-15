@@ -8,11 +8,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
+import android.view.InputDevice;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.easyandroidanimations.library.Animation;
 import com.easyandroidanimations.library.AnimationListener;
@@ -83,6 +85,8 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
                     try {
                         Nulstilclient.execute(RequestMethod.GET);
                     } catch (Exception e) {
+                        System.out.println("Coulnd't refresh game");
+                        Toast.makeText(getApplicationContext(), "Couldn't refresh game, please try again later", Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
 
@@ -95,6 +99,8 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
                             visiblewWord = "test";
 
                     } catch (Exception e) {
+                        System.out.println("Missing connection");
+                        Toast.makeText(getApplicationContext(), "Missing connection, please try again later", Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
 
@@ -140,6 +146,8 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
                         guessLetterclient.addHeader("Content-Type", "appication/json");
                         guessLetterclient.execute(RequestMethod.POST);
                     } catch (Exception e) {
+                        System.out.println("Missing connection");
+                        Toast.makeText(getApplicationContext(), "Missing connection, please try again later", Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
                     RestClient visibleWordclient = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/game/getsynligtord");
@@ -147,6 +155,8 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
                         visibleWordclient.execute(RequestMethod.GET);
                         visiblewWord = visibleWordclient.getResponse().toString();
                     } catch (Exception e) {
+                        System.out.println("Missing connection");
+                        Toast.makeText(getApplicationContext(), "Missing connection, please try again later", Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
 
@@ -158,6 +168,8 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
                 try {
                     Statusclient.execute(RequestMethod.GET);
                 } catch (Exception e) {
+                    System.out.println("Missing connection");
+                    Toast.makeText(getApplicationContext(), "Missing connection, please try again later", Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
                 lettersUsed = Statusclient.getResponse().replaceAll("\"", "");
@@ -184,10 +196,14 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
                             lostword = lostclient.getResponse();
                             System.out.println(lostword);
                         } catch (Exception e) {
+                            System.out.println("Missing connection");
+                            Toast.makeText(getApplicationContext(), "Missing connection, please try again later", Toast.LENGTH_LONG).show();
                             e.printStackTrace();
                         }
                     }
                 } catch (Exception e) {
+                    System.out.println("Missing connection");
+                    Toast.makeText(getApplicationContext(), "Missing connection, please try again later", Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
 
@@ -296,6 +312,7 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
             Statusclient.execute(RequestMethod.GET);
             lettersUsed = Statusclient.getResponse().replaceAll("\"", "");
         } catch (Exception e) {
+            System.out.println("Missing connection");
             e.printStackTrace();
         }
 

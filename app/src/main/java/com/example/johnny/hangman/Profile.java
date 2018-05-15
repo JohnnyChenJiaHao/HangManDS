@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -59,6 +60,8 @@ public class Profile extends AppCompatActivity {
                     try {
                         client.execute(GET);
                     } catch (Exception e) {
+                        System.out.println("Missing connection");
+                        Toast.makeText(getApplicationContext(), "Missing connection, please try again later", Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
                     String response = client.getResponse();
@@ -75,6 +78,8 @@ public class Profile extends AppCompatActivity {
                     }
                 }
                 catch (Exception e) {
+                    System.out.println("Missing connection");
+                    Toast.makeText(getApplicationContext(), "Missing connection, please try again later", Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
                 return null;
