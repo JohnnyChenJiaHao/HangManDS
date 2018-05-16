@@ -1,16 +1,20 @@
 package com.example.johnny.hangman;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
+import android.view.InputDevice;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.easyandroidanimations.library.Animation;
 import com.easyandroidanimations.library.AnimationListener;
@@ -20,13 +24,9 @@ import com.easyandroidanimations.library.ExplodeAnimation;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Created by Johnny on 23/10/17.
- */
+
 
 public class Play extends AppCompatActivity implements View.OnClickListener {
-
-    //public static Galgelogik spil = new Galgelogik();
 
     Button guessButton;
 
@@ -42,11 +42,12 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
     static Thread sc;
 
 
-    static String totalGamesStr, wonStr, lostStr, visiblewWord, lettersUsed, numOfTries;
+    static String totalGamesStr, wonStr, lostStr, visiblewWord, lettersUsed, numOfTries, tmp, lostword;
     String[] wrongLetters;
 
     static long tStart, tEnd, tDelta;
     static double elapsedSeconds, temp1, temp2, temp3;
+    int numtries;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +68,7 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
         score = (TextView) findViewById(R.id.score);
 
 
+
         guessButton.setOnClickListener(this);
 
         letters.setText("Used letters: ");
@@ -83,14 +85,22 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
                     try {
                         Nulstilclient.execute(RequestMethod.GET);
                     } catch (Exception e) {
+                        System.out.println("Coulnd't refresh game");
+                        Toast.makeText(getApplicationContext(), "Couldn't refresh game, please try again later", Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
 
                     RestClient client = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/game/getsynligtord");
                     try {
                         client.execute(RequestMethod.GET);
-                        visiblewWord = client.getResponse().toString();
+                        if(client.getResponseCode() == 200){
+                            visiblewWord = client.getResponse().toString();
+                        }else
+                            visiblewWord = "test";
+
                     } catch (Exception e) {
+                        System.out.println("Missing connection");
+                        Toast.makeText(getApplicationContext(), "Missing connection, please try again later", Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
 
@@ -136,6 +146,8 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
                         guessLetterclient.addHeader("Content-Type", "appication/json");
                         guessLetterclient.execute(RequestMethod.POST);
                     } catch (Exception e) {
+                        System.out.println("Missing connection");
+                        Toast.makeText(getApplicationContext(), "Missing connection, please try again later", Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
                     RestClient visibleWordclient = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/game/getsynligtord");
@@ -143,6 +155,8 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
                         visibleWordclient.execute(RequestMethod.GET);
                         visiblewWord = visibleWordclient.getResponse().toString();
                     } catch (Exception e) {
+                        System.out.println("Missing connection");
+                        Toast.makeText(getApplicationContext(), "Missing connection, please try again later", Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
 
@@ -154,6 +168,8 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
                 try {
                     Statusclient.execute(RequestMethod.GET);
                 } catch (Exception e) {
+                    System.out.println("Missing connection");
+                    Toast.makeText(getApplicationContext(), "Missing connection, please try again later", Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
                 lettersUsed = Statusclient.getResponse().replaceAll("\"", "");
@@ -164,15 +180,30 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
                     WrongLetterclient.execute(RequestMethod.GET);
                     //JSONObject status = new JSONObject(WrongLetterclient.getResponse());
                     String WrongLetters = WrongLetterclient.getResponse();
+
                     String tmp[] = WrongLetters.split(":");
                     String tmp1[] = tmp[2].split("B");
-                    String wrongs [] = tmp1[0].split(" ");
+                    String wrongs[] = tmp1[0].split(" ");
                     numOfTries = wrongs[1];
-                    numOfTries.replaceAll("\n","");
-                    numOfTries.replaceAll(" ", "");
-
-
+                    numOfTries.replace("\n", "");
+                    numOfTries.replace(" ", "");
+                    numOfTries.replace("\t", "");
+                    numtries = Integer.parseInt(numOfTries.trim());
+                    if (numtries == 6) {
+                        RestClient lostclient = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/game/getordet");
+                        try {
+                            lostclient.execute(RequestMethod.GET);
+                            lostword = lostclient.getResponse();
+                            System.out.println(lostword);
+                        } catch (Exception e) {
+                            System.out.println("Missing connection");
+                            Toast.makeText(getApplicationContext(), "Missing connection, please try again later", Toast.LENGTH_LONG).show();
+                            e.printStackTrace();
+                        }
+                    }
                 } catch (Exception e) {
+                    System.out.println("Missing connection");
+                    Toast.makeText(getApplicationContext(), "Missing connection, please try again later", Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
 
@@ -184,139 +215,88 @@ public class Play extends AppCompatActivity implements View.OnClickListener {
                 wordView.setText(visiblewWord);
                 letters.setText("Used letters: " + lettersUsed);
                 tries.setText("Number of tries: " + numOfTries);
-
+                final SharedPreferences.Editor TotalGame = getSharedPreferences("TotalGames", Context.MODE_PRIVATE).edit();
+                final SharedPreferences.Editor lose = getSharedPreferences("Losses", Context.MODE_PRIVATE).edit();
                 if (!visiblewWord.contains("*")) {
                     //tEnd = SystemClock.elapsedRealtime();
-                    getScore();
+                    temp3 = getScore();
                     totalTime();
-                    String time = String.valueOf(getTotalTime());
+                    Double time = getTotalTime();
                     Intent i = new Intent(getApplicationContext(), Win.class);
                     i.putExtra("time", time);
                     i.putExtra("score", temp3);
-                    i.putExtra("tries", numOfTries);
+                    i.putExtra("tries", numtries);
+
+
+                    totalGames++;
+                    TotalGame.putInt(totalGamesStr, totalGames);
+                    TotalGame.apply();
+
+                    won++;
+                    final SharedPreferences.Editor win = getSharedPreferences("Wins", Context.MODE_PRIVATE).edit();
+                    win.putInt(wonStr, won);
+                    win.apply();
                     MediaPlayer win_sound = MediaPlayer.create(getApplicationContext(), R.raw.win);
                     win_sound.start();
 
                     startActivity(i);
                     finish();
-                }
-                /*
-                if(AntalForkerte = 7 (tror jeg er maks antal før man dør)){
-                    Intent i = new Intent(getApplicationContext(), Lose.class);
-                    i.putExtra("currentScore", spil.getScore());
-                    startActivity(i);
-                    finish();
-                }
-                 */
-                /*
-                RestClient GameWonclient = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/game/erspilletvundet");
-                try {
-                    GameWonclient.execute(GET);
-                    String response = GameWonclient.getResponse();
-                    System.out.println(response);
-                    if (response.equals("true")) {
+                } else {
+                    if (numtries == 6) {
+                        final MediaPlayer lose_sound = MediaPlayer.create(getApplicationContext(), R.raw.lose);
+                        lose_sound.start();
+                        temp3 = getScore();
+                        totalGames++;
+                        TotalGame.putInt(totalGamesStr, totalGames);
+                        TotalGame.apply();
 
-                        //MediaPlayer win_sound = MediaPlayer.create(getApplicationContext(), R.raw.win);
-                        //win_sound.start();
-
-                        Intent i = new Intent(getApplicationContext(), Win.class);
-                        // i.putExtra("currentScore", spil.getScore());
+                        lost++;
+                        lose.putInt(lostStr, lost);
+                        lose.apply();
+                        Intent i = new Intent(getApplicationContext(), Lose.class);
+                        i.putExtra("currentScore", temp3);
+                        i.putExtra("word", lostword);
                         startActivity(i);
                         finish();
-                    } else {
-                        RestClient GameLostclient = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/game/erspillettabt");
-                        try {
-                            GameLostclient.execute(GET);
-                            if (GameLostclient.getResponse().equals("true")) {
-                                // final MediaPlayer lose_sound = MediaPlayer.create(getApplicationContext(), R.raw.lose);
-                                //lose_sound.start();
-
-                                Intent i = new Intent(getApplicationContext(), Lose.class);
-                                i.putExtra("currentScore", spil.getScore());
-                                startActivity(i);
-                                finish();
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
-                */
             }
         }
 
-            /*
-            MANGLER
-            MANGLER
-            MANGLER
-            MANGLER
-            MANGLER
-            BILLEDER NEDENFOR KAN IKKE LAVES FØR REST "LOGSTATUS" VIRKER
-            MANGLER
-            MANGLER
-            MANGLER
-            MANGLER
-
- */
         if (v == guessButton) {
             if (guessLet.length() != 1) {
                 guessLetter.setError("Write a letter");
             }
             new GuessLetterAsyncTask().execute();
 
-//            switch (spil.getAntalLiv()) {
-//                case 5:
-//                    image.setImageResource(R.mipmap.forkert1);
-//                    break;
-//                case 4:
-//                    image.setImageResource(R.mipmap.forkert2);
-//                    break;
-//                case 3:
-//                    image.setImageResource(R.mipmap.forkert3);
-//                    break;
-//                case 2:
-//                    image.setImageResource(R.mipmap.forkert4);
-//                    break;
-//                case 1:
-//                    image.setImageResource(R.mipmap.forkert5);
-//                    break;
-//                case 0:
-//                    image.setImageResource(R.mipmap.forkert6);
-//                    break;
-//                default:
-//                    break;
-//            }
+            switch (numtries) {
+                case 0:
+                    image.setImageResource(R.mipmap.forkert1);
+                    break;
+                case 1:
+                    image.setImageResource(R.mipmap.forkert2);
+                    break;
+                case 2:
+                    image.setImageResource(R.mipmap.forkert3);
+                    break;
+                case 3:
+                    image.setImageResource(R.mipmap.forkert4);
+                    break;
+                case 4:
+                    image.setImageResource(R.mipmap.forkert5);
+                    break;
+                case 5:
+                    image.setImageResource(R.mipmap.forkert6);
+                    break;
+                default:
+                    break;
+            }
             guessLetter.setText("");
         }
     }
 
-    /*
-                            final SharedPreferences.Editor TotalGame = getSharedPreferences("TotalGames", Context.MODE_PRIVATE).edit();
 
-                        totalGames++;
-                        TotalGame.putInt(totalGamesStr, totalGames);
-                        TotalGame.apply();
-
-                        won++;
-                        final SharedPreferences.Editor win = getSharedPreferences("Wins", Context.MODE_PRIVATE).edit();
-                        win.putInt(wonStr, won);
-                        win.apply();
-
-
-
-
-totalGames++;
-                        TotalGame.putInt(totalGamesStr, totalGames);
-                        TotalGame.apply();
-
-                        lost++;
-                        final SharedPreferences.Editor lose = getSharedPreferences("Losses", Context.MODE_PRIVATE).edit();
-                        lose.putInt(lostStr, lost);
-                        lose.apply();
-     */    
-  public void totalTime() {
+    public void totalTime() {
         totalTime = (tEnd - tStart) / 1000;
     }
 
@@ -325,21 +305,14 @@ totalGames++;
     }
 
 
-    public static void getScore() {
+    public static double getScore() {
         //Grabbing time and converting to seconds.
-        RestClient visibleWordclient = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/game/getsynligtord");
-        try {
-            visibleWordclient.execute(RequestMethod.GET);
-            visiblewWord = visibleWordclient.getResponse().toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         RestClient Statusclient = new RestClient("http://ubuntu4.saluton.dk:20002/Galgeleg/rest/game/getbrugtebogstaver");
         try {
             Statusclient.execute(RequestMethod.GET);
             lettersUsed = Statusclient.getResponse().replaceAll("\"", "");
         } catch (Exception e) {
+            System.out.println("Missing connection");
             e.printStackTrace();
         }
 
@@ -347,12 +320,10 @@ totalGames++;
         tDelta = tEnd - tStart;
         elapsedSeconds = tDelta / 1000.0;
 
-        //Random "algorithm" i came up with
-        //to calculate score relative to word length,
-        //time spend and amount of misses.
         temp1 = elapsedSeconds * (lettersUsed.length() + 1);
         temp2 = temp1 / (visiblewWord.length() + 1);
         temp3 = (100 / temp2) * 100;
+        return temp3;
     }
 
     //Score Thread for calculating and updating score
@@ -365,8 +336,6 @@ totalGames++;
             }
 
             getScore();
-            //System.out.println("Score: "+String.format("%.3f", temp3));
-
         }
     }
 }

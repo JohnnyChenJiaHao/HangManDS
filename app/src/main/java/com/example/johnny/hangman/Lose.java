@@ -17,7 +17,8 @@ import android.widget.TextView;
 public class Lose extends AppCompatActivity implements View.OnClickListener {
 
     TextView word, score;
-    int currentScore;
+    Double currentScore;
+    String finalword;
     Button menu, playAgain;
 
     @Override
@@ -34,10 +35,16 @@ public class Lose extends AppCompatActivity implements View.OnClickListener {
         playAgain.setOnClickListener(this);
 
         Intent i = getIntent();
-        //currentScore = i.getIntExtra("currentScore",spil.getScore());
+        Bundle bundle = i.getExtras();
+        if (bundle != null) {
+            finalword = (String) bundle.get("word");
+            currentScore = (Double) bundle.get("currentScore");
+
+        }
 
         //word.setText("The word was: " + spil.getOrdet());
-        score.setText("Score: " + currentScore);
+        score.setText("score: " + String.format("%.3f",currentScore));
+        word.setText("Word: " + finalword);
     }
 
     @Override
