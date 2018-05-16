@@ -121,9 +121,11 @@ public class Win extends AppCompatActivity implements View.OnClickListener {
                 postclient.setJSONString(inputJsonString);
                 postclient.addHeader("Content-Type", "appication/json");
                 try {
-                    postclient.execute(RequestMethod.POST);
-                    System.out.println(postclient.getResponseCode());
-                    System.out.println(postclient.getResponse());
+                    if(!auth.equals("failed")) {
+                        postclient.execute(RequestMethod.POST);
+                        System.out.println(postclient.getResponseCode());
+                        System.out.println(postclient.getResponse());
+                    }
 
                 } catch (Exception e) {
                     System.out.println("Missing connection");
