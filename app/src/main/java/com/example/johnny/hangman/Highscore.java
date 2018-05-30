@@ -74,9 +74,9 @@ public class Highscore extends AppCompatActivity {
                 }
                 catch (Exception e) {
                     System.out.println("Missing connection");
-                    Toast.makeText(getApplicationContext(), "Missing connection, please try again later", Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
+
                 return null;
             }
 
